@@ -13,4 +13,4 @@ class TextParser:
         try:
             return UserAction(verb=self.verbs[text], object=None)
         except KeyError:
-            raise InvalidUserActionException(f"I don't know how to {text}")
+            raise InvalidUserActionException(f"I don't know how to {text}") from None

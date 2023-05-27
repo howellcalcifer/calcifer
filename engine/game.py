@@ -1,6 +1,5 @@
 from calcifer.calcifer import Calcifer
 from ui.controller import UIController
-from ui.scene import Scene
 
 
 class Game:
