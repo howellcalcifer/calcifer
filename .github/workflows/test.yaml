@@ -21,7 +21,4 @@ jobs:
           pipenv run ruff --format=github --target-version=py37 .
       - name: Test with pytest
         run: |
-          pipenv run pip freeze
-          pipenv run python -c "import yaml; print(yaml.__version__)"
-          pipenv run python -c "from yaml import load"
           pipenv run pytest
