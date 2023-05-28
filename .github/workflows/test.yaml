@@ -35,4 +35,5 @@ jobs:
       - name: Test with pytest
         run: |
           pipenv run pip freeze
+          pipenv run python -c "import yaml; print(yaml.__version__)"
           pipenv run pytest
