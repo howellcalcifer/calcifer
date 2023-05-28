@@ -2,7 +2,7 @@ import dataclasses
 from typing import Optional
 from unittest import TestCase
 
-from ui.actions import UserAction, UserVerb
+from world.actions import UserAction, UserVerb, UserVerbDictionary
 from ui.text.parser import TextParser, InvalidUserActionException
 
 
@@ -15,10 +15,11 @@ class UserInputCase:
 
 
 nod_verb = UserVerb(name='nod')
+verbs = UserVerbDictionary([('nod', nod_verb)])
 
 
 class TestTranslate(TestCase):
-    parser = TextParser(valid_verbs=[nod_verb])
+    parser = TextParser(verbs)
 
     def test_translate_user_action(self):
         cases = [UserInputCase(user_input="nod", expect_invalid=False,

@@ -4,7 +4,7 @@ from unittest.mock import Mock
 from calcifer.calcifer import Calcifer
 from engine.game import Game
 from ui.controller import UIController
-from ui.scene import Scene
+from world.scene import Scene
 
 
 class TestGame(TestCase):

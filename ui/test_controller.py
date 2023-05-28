@@ -3,9 +3,9 @@ from typing import Optional
 from unittest import TestCase
 from unittest.mock import patch, Mock, call
 
-from ui.actions import UserAction, UserVerb
+from world.actions import UserAction, UserVerb
 from ui.controller import UIControllerCommandLine
-from ui.scene import Scene
+from world.scene import Scene
 from ui.text.parser import TextParser, InvalidUserActionException
 
 

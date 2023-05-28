@@ -1,4 +1,4 @@
-from ui.actions import UserAction, UserVerb
+from world.actions import UserAction, UserVerbDictionary
 
 
 class InvalidUserActionException(Exception):
@@ -6,8 +6,8 @@ class InvalidUserActionException(Exception):
 
 
 class TextParser:
-    def __init__(self, valid_verbs: list[UserVerb]):
-        self.verbs = {verb.name: verb for verb in valid_verbs}
+    def __init__(self, verbs: UserVerbDictionary):
+        self.verbs = verbs
 
     def parse_user_action(self, text: str) -> UserAction:
         try:
