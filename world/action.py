@@ -4,12 +4,7 @@ import dataclasses
 from importlib.resources import files
 
 from world.item import Item
-from yaml import load
-
-try:
-    from yaml import CLoader as Loader
-except ImportError:
-    from yaml import Loader
+from yaml import load, Loader
 
 
 @dataclasses.dataclass
