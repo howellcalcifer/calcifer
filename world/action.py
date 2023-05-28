@@ -24,10 +24,9 @@ class UserVerbDictionary(dict[str, UserVerb]):
         with (files(package) / resource).open('r') as text_io:
             raw_struct = load(text_io, Loader)
         verb_dictionary = UserVerbDictionary()
-        try:
-            intransitive = raw_struct['intransitive']
-            for verb in intransitive:
-                verb_dictionary[verb] = UserVerb(verb)
-        except KeyError:
-            pass
+
+        intransitive = raw_struct['intransitive']
+
+        for verb in intransitive:
+            verb_dictionary[verb] = UserVerb(verb)
         return verb_dictionary
