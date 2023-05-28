@@ -1,10 +1,8 @@
 import abc
 import textwrap
-from typing import Collection
 
 from world.action import UserAction
 from world.scene import Scene
-from world.item import Item
 from ui.text.parser import TextParser, InvalidUserActionException
 
 
@@ -14,7 +12,7 @@ class UIController(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def await_user_action(self, available_objects=Collection[Item]) -> UserAction:
+    def await_user_action(self) -> UserAction:
         pass
 
 
@@ -25,7 +23,7 @@ class UIControllerCommandLine(UIController):
     def show_scene(self, scene: Scene):
         self._output(scene.text)
 
-    def await_user_action(self, available_objects=Collection[Item]):
+    def await_user_action(self):
         print("What would you like to do?")
         while True:
             try:

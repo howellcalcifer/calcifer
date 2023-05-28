@@ -9,4 +9,4 @@ class Game:
 
     def start(self):
         self.ui.show_scene(self.calcifer.description)
-        self.ui.await_user_action(available_objects=[])
+        self.ui.await_user_action()
