@@ -25,7 +25,7 @@ jobs:
       - name: Install dependencies
         if: steps.cache-pipenv.outputs.cache-hit != 'true'
         run: |
-          pipenv install --dev
+          pipenv install --deploy --dev
       - name: Lint with ruff
         run: |
           # stop the build if there are Python syntax errors or undefined names
