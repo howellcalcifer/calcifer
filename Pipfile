@@ -7,6 +7,8 @@ name = "pypi"
 pyyaml = "*"
 
 [dev-packages]
+ruff = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.11"
