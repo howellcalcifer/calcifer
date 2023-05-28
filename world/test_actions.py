@@ -1,7 +1,7 @@
 import dataclasses
 from unittest import TestCase
 
-from world.actions import UserVerbDictionary, UserVerb
+from world.action import UserVerbDictionary, UserVerb
 
 
 @dataclasses.dataclass

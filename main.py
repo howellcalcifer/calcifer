@@ -1,7 +1,7 @@
 # This is a game in which you are the fire demon calcifer
 from calcifer.calcifer import Calcifer
 from engine.game import Game
-from world.actions import UserVerbDictionary
+from world.action import UserVerbDictionary
 from ui.controller import UIControllerCommandLine
 from ui.text.parser import TextParser
 

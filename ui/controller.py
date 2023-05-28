@@ -2,9 +2,9 @@ import abc
 import textwrap
 from typing import Collection
 
-from world.actions import UserAction
+from world.action import UserAction
 from world.scene import Scene
-from world.items import Item
+from world.item import Item
 from ui.text.parser import TextParser, InvalidUserActionException
 
 

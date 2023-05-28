@@ -3,7 +3,7 @@ from __future__ import annotations
 import dataclasses
 from importlib.resources import files
 
-from world.items import Item
+from world.item import Item
 from yaml import load
 
 try:
