@@ -5,6 +5,7 @@ from world.location import Location
 
 
 class Game:
+
     def __init__(self, ui: UIController, calcifer: Calcifer):
         self.ui = ui
         self.calcifer = calcifer
