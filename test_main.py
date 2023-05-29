@@ -12,20 +12,19 @@ class TestMain(TestCase):
     @patch('main.Game')
     def test_main_starts_game(self, mock_game_class, mock_location_class, mock_ui_controller_class, mock_calcifer_class, _):
         """
-        Running play starts the game engine at start location with the command line UI and Calcifer loaded
+        Running play starts the game engine with the command line UI and Calcifer loaded
         """
         # given
         mock_ui_controller = mock_ui_controller_class.return_value
         mock_calcifer = mock_calcifer_class.return_value
         mock_game = mock_game_class.return_value
-        mock_location = mock_location_class.return_value
 
         # when
         main()
 
         # then
         mock_game_class.assert_called_with(mock_ui_controller, mock_calcifer)
-        mock_game.start.assert_called_with(mock_location)
+        mock_game.start.assert_called_with()
 
     @patch('builtins.input')
     @patch('main.TextParser')
