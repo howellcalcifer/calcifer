@@ -1,5 +1,5 @@
 # This is a game in which you are the fire demon calcifer
-from calcifer.calcifer import Calcifer
+from world.character import Calcifer
 from engine.game import Game
 from world.action import UserVerbDictionary
 from ui.controller import UIControllerCommandLine
@@ -13,7 +13,7 @@ def main():
     parser = TextParser(verbs)
     output_controller = UIControllerCommandLine(parser)
     location = Location(Scene("You see a room."), [])
-    Game(output_controller, Calcifer()).start(location)
+    Game(output_controller, Calcifer(location)).start()
 
 
 if __name__ == '__main__':

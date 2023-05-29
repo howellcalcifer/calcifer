@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-import dataclasses
+from abc import ABC, abstractmethod
 
 from engine.game import Game
 from pattern.observer import Topic, Observer
-from world.action import UserAction
 
 
-@dataclasses.dataclass
-class Event:
-    game: Game
-    action: UserAction
+class Event(ABC):
+    @property
+    @abstractmethod
+    def game(self) -> Game:
+        pass
 
 
 class EventTopic(Topic):

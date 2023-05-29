@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import Mock, call
 
-from calcifer.calcifer import Calcifer
+from world.character import Calcifer
 from engine.game import Game
 from ui.controller import UIController
 from world.action import UserAction, UserVerb
@@ -12,10 +12,11 @@ from world.scene import Scene
 class TestGame(TestCase):
     def setUp(self) -> None:
         self.ui_controller = Mock(spec=UIController)
-        self.calcifer = Mock(spec=Calcifer)
-        self.calcifer.description = Mock(spec=Scene)
         self.start_location = Mock(spec=Location)
         self.start_location.scene = Mock(spec=Scene)
+        self.calcifer = Mock(spec=Calcifer)
+        self.calcifer.description = Mock(spec=Scene)
+        self.calcifer.location = self.start_location
         self.game = Game(self.ui_controller, self.calcifer)
 
     def test_start_outputs_calcifer_description(self):
@@ -27,7 +28,7 @@ class TestGame(TestCase):
         expected_scene = self.calcifer.description
 
         # when
-        self.game.start(self.start_location)
+        self.game.start()
 
         # then
         self.ui_controller.show_scene.assert_called_with(expected_scene)
@@ -43,7 +44,7 @@ class TestGame(TestCase):
 
         # when
         self.ui_controller.await_user_action.return_value = UserAction(look_verb, None)
-        self.game.start(self.start_location)
+        self.game.start()
 
         # then
         self.ui_controller.show_scene.assert_called_with(expected_scene)
@@ -57,7 +58,7 @@ class TestGame(TestCase):
 
         # when
         self.ui_controller.await_user_action.return_value = UserAction(nod_verb, None)
-        self.game.start(self.start_location)
+        self.game.start()
 
         # then
         assert ((expected_scene,),) not in self.ui_controller.show_scene.call_args_list
@@ -76,7 +77,7 @@ class TestGame(TestCase):
         # when
         self.ui_controller.await_user_action.side_effect = [UserAction(look_verb, None), UserAction(nod_verb, None),
                                                             UserAction(quit_verb, None)]
-        self.game.start(self.start_location)
+        self.game.start()
 
         # then
         mock_manager.assert_has_calls([call.show_scene(expected_scene), call.show_event(expected_event)],
