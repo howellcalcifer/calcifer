@@ -1,5 +1,7 @@
 from calcifer.calcifer import Calcifer
 from ui.controller import UIController
+from world.action import CoreVerbs
+from world.location import Location
 
 
 class Game:
@@ -7,6 +9,8 @@ class Game:
         self.ui = ui
         self.calcifer = calcifer
 
-    def start(self):
+    def start(self, location: Location):
         self.ui.show_scene(self.calcifer.description)
-        self.ui.await_user_action()
+        action = self.ui.await_user_action()
+        if action.verb.name == CoreVerbs.LOOK.value:
+            self.ui.show_scene(location.scene)

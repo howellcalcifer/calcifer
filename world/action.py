@@ -1,10 +1,16 @@
 from __future__ import annotations
 
 import dataclasses
+from enum import Enum
 from importlib.resources import files
 
 from world.item import Item
 from yaml import load, Loader
+
+
+class CoreVerbs(Enum):
+    LOOK = "look"
+    QUIT = "quit"
 
 
 @dataclasses.dataclass
