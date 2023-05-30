@@ -1,4 +1,3 @@
-import dataclasses
 from abc import ABC, abstractmethod
 
 from world.location import Location
@@ -6,6 +5,7 @@ from world.scene import Scene
 
 
 class Character(ABC):
+    name: str
 
     @property
     @abstractmethod
@@ -23,6 +23,7 @@ class Calcifer(Character):
 
     def __init__(self, location: Location):
         self._location = location
+        self.name = "Calcifer"
 
     @property
     def location(self):

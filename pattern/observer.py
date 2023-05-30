@@ -16,28 +16,20 @@ class Observer(ABC):
         pass
 
 
-class Topic(ABC):
+class Topic:
     """
     The Topic interface declares a set of methods for managing subscribers.
     """
 
-    @abstractmethod
+    def __init__(self):
+        self._subscribers: list[Observer] = []
+
     def subscribe(self, observer: Observer) -> None:
-        """
-        Attach an observer to the topic.
-        """
-        pass
+        self._subscribers.append(observer)
 
-    @abstractmethod
     def unsubscribe(self, observer: Observer) -> None:
-        """
-        Detach an observer from the topic.
-        """
-        pass
+        self._subscribers.remove(observer)
 
-    @abstractmethod
     def publish(self) -> None:
-        """
-        Notify all observers about an event.
-        """
-        pass
+        for sub in self._subscribers:
+            sub.update(self)
