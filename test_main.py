@@ -2,7 +2,7 @@ from unittest import TestCase
 from unittest.mock import patch
 
 from main import main
-from world.action import UserAction, UserVerb
+from world.verb import UserAction, UserVerb
 
 
 class TestMain(TestCase):

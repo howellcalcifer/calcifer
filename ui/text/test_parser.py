@@ -2,7 +2,7 @@ import dataclasses
 from typing import Optional
 from unittest import TestCase
 
-from world.action import UserAction, UserVerb, UserVerbDict
+from world.verb import UserAction, UserVerb, UserVerbDict
 from ui.text.parser import TextParser, InvalidUserActionException
 
 

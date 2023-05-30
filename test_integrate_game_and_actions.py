@@ -3,9 +3,9 @@ from unittest.mock import Mock, call
 
 from engine.game import Game
 from ui.controller import UIController
-from world.action import UserAction, UserVerb, ActionSceneDict
+from world.verb import UserAction, UserVerb
 from world.character import Calcifer
-from world.event.action import UserActionObserver
+from engine.action import UserActionObserver, ActionSceneDict
 from world.location import Location
 from world.scene import Scene
 

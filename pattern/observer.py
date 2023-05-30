@@ -9,16 +9,16 @@ class Observer(ABC):
     """
 
     @abstractmethod
-    def update(self, topic: Topic) -> None:
+    def update(self, topic: Subject) -> None:
         """
         Receive update from topic.
         """
         pass
 
 
-class Topic:
+class Subject:
     """
-    The Topic interface declares a set of methods for managing subscribers.
+    The Subject interface declares a set of methods for managing subscribers.
     """
 
     def __init__(self):

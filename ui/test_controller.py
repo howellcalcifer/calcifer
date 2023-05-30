@@ -3,7 +3,7 @@ from typing import Optional
 from unittest import TestCase
 from unittest.mock import patch, Mock, call
 
-from world.action import UserAction, UserVerb
+from world.verb import UserAction, UserVerb
 from ui.controller import UIControllerCommandLine
 from world.scene import Scene
 from ui.text.parser import TextParser, InvalidUserActionException

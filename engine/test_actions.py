@@ -4,8 +4,8 @@ from unittest.mock import Mock
 
 from engine.game import Game
 from ui.controller import UIController
-from world.action import UserVerbDict, UserVerb, UserAction, ActionSceneDict
-from world.event.action import UserActionObserver
+from world.verb import UserVerbDict, UserVerb, UserAction
+from engine.action import UserActionObserver, ActionSceneDict
 from world.scene import Scene
 
 

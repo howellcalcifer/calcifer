@@ -2,9 +2,9 @@
 from engine.game import Game
 from ui.controller import UIControllerCommandLine
 from ui.text.parser import TextParser
-from world.action import UserVerbDict, ActionSceneDict, UserAction
+from world.verb import UserVerbDict, UserAction
 from world.character import Calcifer
-from world.event.action import UserActionObserver
+from engine.action import UserActionObserver, ActionSceneDict
 from world.location import Location
 from world.scene import Scene
 

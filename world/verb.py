@@ -3,12 +3,10 @@ from __future__ import annotations
 import dataclasses
 from enum import Enum
 from importlib.resources import files
-from typing import TypeAlias
 
 from yaml import load, Loader
 
 from world.item import Item
-from world.scene import Scene
 
 
 class CoreVerbs(Enum):
@@ -41,4 +39,3 @@ class UserVerbDict(dict[str, UserVerb]):
         return verb_dictionary
 
 
-ActionSceneDict: TypeAlias = dict[UserAction, Scene]

@@ -1,10 +1,10 @@
-from pattern.observer import Topic
+from pattern.observer import Subject
 from ui.controller import UIController
-from world.action import CoreVerbs, UserAction
+from world.verb import CoreVerbs, UserAction
 from world.character import Calcifer
 
 
-class Game(Topic):
+class Game(Subject):
 
     def __init__(self, ui: UIController, calcifer: Calcifer):
         super().__init__()

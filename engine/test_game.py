@@ -3,7 +3,7 @@ from unittest.mock import Mock
 
 from engine.game import Game
 from ui.controller import UIController
-from world.action import UserAction, UserVerb
+from world.verb import UserAction, UserVerb
 from world.character import Calcifer
 from world.location import Location
 from world.scene import Scene

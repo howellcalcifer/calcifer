@@ -1,7 +1,7 @@
 import abc
 import textwrap
 
-from world.action import UserAction
+from world.verb import UserAction
 from world.scene import Scene
 from ui.text.parser import TextParser, InvalidUserActionException
 

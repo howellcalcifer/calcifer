@@ -1,4 +1,4 @@
-from world.action import UserAction, UserVerbDict
+from world.verb import UserAction, UserVerbDict
 
 
 class InvalidUserActionException(Exception):
