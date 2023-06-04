@@ -36,6 +36,6 @@ class InputControllerCommandLine(InputController):
         while True:
             try:
                 return self.parser.parse_user_action(input())
-            except InvalidUserActionException:
-                print("I don't understand.")
+            except InvalidUserActionException as e:
+                print(e)
                 continue

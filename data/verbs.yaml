@@ -2,22 +2,38 @@ smile:
   type: gesture
   aliases:
     - grin
+  intransitive: true
 bow:
   type: gesture
   description: You bow gracefully
+  intransitive: true
 grimace:
   type: gesture
+  intransitive: true
 sit:
   type: posture
+  intransitive: true
 abracadabra:
   type: magic
   aliases:
     - alakazam
+  intransitive: true
 east:
   type: move
   aliases:
     - e
+  intransitive: true
 quit:
   type: quit
+  intransitive: true
 look:
   type: look
+  intransitive: true
+take:
+  transitive: true
+  type: inventory
+  direction: in
+drop:
+  transitive: true
+  type: inventory
+  direction: out

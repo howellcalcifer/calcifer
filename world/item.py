@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import dataclasses
+from typing import Optional
 
 from world.scene import Scene
 
@@ -8,4 +9,4 @@ from world.scene import Scene
 @dataclasses.dataclass
 class Item:
     name: str
-    description: Scene
+    description: Optional[Scene] = None
