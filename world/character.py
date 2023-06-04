@@ -7,7 +7,17 @@ from pattern.observer import Subject, ObservedAttribute
 from world.scene import Scene
 
 
-class Describable(metaclass=abc.ABCMeta):
+class Describable(abc.ABC):
+
+    @property
+    @abc.abstractmethod
+    def name(self) -> str:
+        """ the name of the entity"""
+
+    @property
+    @abc.abstractmethod
+    def description(self) -> Scene:
+        """ the scene describing the entity"""
 
     @classmethod
     def __subclasshook__(cls, subclass):

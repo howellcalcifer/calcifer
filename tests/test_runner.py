@@ -66,5 +66,5 @@ class TestRunner(TestCase):
         main()
 
         # then
-        mock_user_verb_dictionary_class.from_yaml.assert_called_with('world.resources', 'verbs.yaml')
+        mock_user_verb_dictionary_class.from_yaml.assert_called_with('data', 'verbs.yaml')
         mock_text_parser_class.assert_called_with(mock_user_verb_dictionary)

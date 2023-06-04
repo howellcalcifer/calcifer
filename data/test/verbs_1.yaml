@@ -6,8 +6,6 @@ intransitive:
   bow:
     type: gesture
     description: You bow gracefully
-  grimace:
-    type: gesture
   sit:
     type: posture
   abracadabra:

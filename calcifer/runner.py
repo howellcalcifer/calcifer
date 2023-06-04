@@ -10,7 +10,7 @@ from world.scene import Scene
 
 
 def main():
-    verbs = UserVerbDict.from_yaml("world.resources", "verbs.yaml")
+    verbs = UserVerbDict.from_yaml("data", "verbs.yaml")
     output_controller = OutputControllerCommandLine()
 
     print("Loading action observer")
