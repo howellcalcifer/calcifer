@@ -2,7 +2,7 @@ import dataclasses
 from typing import Optional
 from unittest import TestCase
 
-from world.verb import UserAction, UserVerb, UserVerbDict
+from world.verb import UserAction, UserVerb, UserVerbDict, VerbType
 from ui.text.parser import TextParser, InvalidUserActionException
 
 
@@ -14,7 +14,7 @@ class UserInputCase:
     expect_invalid_message: Optional[str] = None
 
 
-nod_verb = UserVerb(name='nod')
+nod_verb = UserVerb(name='nod', type=VerbType.GESTURE, description=None)
 verbs = UserVerbDict([('nod', nod_verb)])
 
 

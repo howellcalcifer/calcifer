@@ -1,4 +1,20 @@
 intransitive:
-  - smile
-  - bow
-  - grimace
+  smile:
+    type: gesture
+    aliases:
+      - grin
+  bow:
+    type: gesture
+    description: You bow gracefully
+  grimace:
+    type: gesture
+  sit:
+    type: posture
+  abracadabra:
+    type: magic
+    aliases:
+      - alakazam
+  east:
+    type: move
+    aliases:
+      - e

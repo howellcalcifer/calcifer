@@ -6,7 +6,9 @@ from importlib.resources import files
 
 from yaml import load, Loader
 
+from world.character import Character
 from world.item import Item
+from world.scene import Scene
 
 
 class CoreVerbs(Enum):
@@ -14,15 +16,27 @@ class CoreVerbs(Enum):
     QUIT = "quit"
 
 
+class VerbType(Enum):
+    LOOK = "look"
+    GESTURE = "gesture"
+    POSTURE = "posture"
+    MAGIC = "magic"
+    INVENTORY = "inventory"
+    MOVE = "move"
+    QUIT = "quit"
+
+
 @dataclasses.dataclass(frozen=True)
 class UserVerb:
     name: str
+    type: VerbType
+    description: Scene | None
 
 
 @dataclasses.dataclass(frozen=True)
 class UserAction:
     verb: UserVerb
-    object: Item | None
+    object: Item | Character | None
 
 
 class UserVerbDict(dict[str, UserVerb]):
@@ -34,8 +48,7 @@ class UserVerbDict(dict[str, UserVerb]):
 
         intransitive = raw_struct['intransitive']
 
-        for verb in intransitive:
-            verb_dictionary[verb] = UserVerb(verb)
+        for verb, properties in intransitive.items():
+            verb_dictionary[verb] = UserVerb(verb, VerbType(properties["type"]),
+                                             Scene(properties["description"]) if "description" in properties else None)
         return verb_dictionary
-
-

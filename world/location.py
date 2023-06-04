@@ -7,5 +7,6 @@ from world.scene import Scene
 
 @dataclasses.dataclass
 class Location:
-    scene: Scene
+    name: str
+    description: Scene
     items: Collection[Item]

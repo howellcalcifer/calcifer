@@ -3,14 +3,14 @@ from typing import Optional
 from unittest import TestCase
 from unittest.mock import patch, Mock, call
 
-from world.verb import UserAction, UserVerb
-from ui.controller import UIControllerCommandLine
-from world.scene import Scene
+from ui.controllers import OutputControllerCommandLine, InputControllerCommandLine
 from ui.text.parser import TextParser, InvalidUserActionException
+from world.scene import Scene
+from world.verb import UserAction, UserVerb, VerbType
 
 
-class TestUICommandLineShowScene(TestCase):
-    ui = UIControllerCommandLine(parser=Mock(spec=TextParser))
+class TestOutputControllerCommandLine(TestCase):
+    ui = OutputControllerCommandLine()
 
     @patch('builtins.print')
     def test_show_scene_prints(self, mocked_print):
@@ -51,13 +51,13 @@ class UserInputCase:
     expected_action: UserAction
 
 
-nod_verb = UserVerb(name="nod")
-frown_verb = UserVerb(name="frown")
+nod_verb = UserVerb(name="nod", type=VerbType.GESTURE, description=None)
+frown_verb = UserVerb(name="frown", type=VerbType.GESTURE, description=None)
 nod_action = UserAction(verb=nod_verb, object=None)
 frown_action = UserAction(verb=frown_verb, object=None)
 
 
-class TestUICommandLineUserAction(TestCase):
+class TestInputCommandLineUserAction(TestCase):
     cases = [
         UserInputCase(inputs=[UserInput(input="nod", parser_output=nod_action)], expected_action=nod_action),
         UserInputCase(inputs=[UserInput(input="move", parser_output=InvalidUserActionException("Nope")),
@@ -67,7 +67,7 @@ class TestUICommandLineUserAction(TestCase):
 
     def setUp(self) -> None:
         self.mock_parser = Mock(spec=TextParser)
-        self.controller = UIControllerCommandLine(parser=self.mock_parser)
+        self.controller = InputControllerCommandLine(parser=self.mock_parser)
 
     @patch('builtins.input')
     def test_await_user_action_parses_input(self, mock_input):

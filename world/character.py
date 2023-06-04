@@ -1,36 +1,46 @@
-from abc import ABC, abstractmethod
+from __future__ import annotations
 
-from world.location import Location
+import abc
+import dataclasses
+
+from pattern.observer import Subject, ObservedAttribute
 from world.scene import Scene
 
 
-class Character(ABC):
-    name: str
-
+class Describable(abc.ABC):
     @property
-    @abstractmethod
-    def location(self) -> Location:
+    @abc.abstractmethod
+    def name(self) -> str:
         pass
 
     @property
-    @abstractmethod
-    def description(self) -> str:
-        pass
-
-
-class Calcifer(Character):
-    _location: Location
-
-    def __init__(self, location: Location):
-        self._location = location
-        self.name = "Calcifer"
-
-    @property
-    def location(self):
-        return self._location
-
-    @property
+    @abc.abstractmethod
     def description(self) -> Scene:
-        return Scene("You are Calcifer. You have a thin blue face, a thin blue nose, curly green flames for hair"
-                     "and eyebrows, a purple flaming mouth, and savage teeth. Your eyes are orange flames with"
-                     "purple pupils. You do not have any evident lower body.")
+        pass
+
+    @classmethod
+    def __subclasshook__(cls, subclass):
+        if cls is Describable:
+            if any("name" in C.__dict__ for C in subclass.__mro__) and any(
+                    "description" in C.__dict__ for C in subclass.__mro__):
+                return True
+        return NotImplemented
+
+
+class Character(Subject):
+    def __init__(self, name):
+        super().__init__()
+        self.name = name
+        self.gesture = None
+        self.looking_at = None
+
+    location: Scene = ObservedAttribute('location')
+    description: Scene = ObservedAttribute('description')
+    looking_at: Describable | None = ObservedAttribute('looking_at')
+    gesture: Describable | None = ObservedAttribute('gesture')
+
+
+@dataclasses.dataclass(frozen=True)
+class Gesture:
+    name: str
+    description: Scene

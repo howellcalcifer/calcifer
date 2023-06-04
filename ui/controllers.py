@@ -1,27 +1,36 @@
 import abc
 import textwrap
 
+from world.character import Character
 from world.verb import UserAction
 from world.scene import Scene
 from ui.text.parser import TextParser, InvalidUserActionException
 
 
-class UIController(abc.ABC):
+class OutputController(abc.ABC):
     @abc.abstractmethod
     def show_scene(self, scene: Scene):
         pass
 
+
+class InputController(abc.ABC):
     @abc.abstractmethod
     def await_user_action(self) -> UserAction:
         pass
 
 
-class UIControllerCommandLine(UIController):
-    def __init__(self, parser: TextParser):
-        self.parser = parser
-
+class OutputControllerCommandLine(OutputController):
     def show_scene(self, scene: Scene):
         self._output(scene.text)
+
+    @staticmethod
+    def _output(string):
+        print(textwrap.fill(string, width=76))
+
+
+class InputControllerCommandLine(InputController):
+    def __init__(self, parser: TextParser):
+        self.parser = parser
 
     def await_user_action(self):
         print("What would you like to do?")
@@ -31,7 +40,3 @@ class UIControllerCommandLine(UIController):
             except InvalidUserActionException:
                 print("I don't understand.")
                 continue
-
-    @staticmethod
-    def _output(string):
-        print(textwrap.fill(string, width=76))

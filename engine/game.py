@@ -1,30 +1,30 @@
-from pattern.observer import Subject
-from ui.controller import UIController
-from world.verb import CoreVerbs, UserAction
-from world.character import Calcifer
+from pattern.observer import Subject, ObservedAttribute
+from ui.controllers import OutputController, InputController
+from world.character import Character, Gesture
+from world.scene import Scene
+from world.verb import CoreVerbs, UserAction, UserVerb, VerbType
 
 
 class Game(Subject):
+    failure_status: str = ObservedAttribute('failure_status')
 
-    def __init__(self, ui: UIController, calcifer: Calcifer):
+    def __init__(self, ui: InputController, calcifer: Character):
         super().__init__()
         self.ui = ui
         self.calcifer = calcifer
-        self._current_action: UserAction | None = None
 
     def start(self):
-        self.ui.show_scene(self.calcifer.description)
+        self.calcifer.looking_at = self.calcifer
         while True:
             action = self.ui.await_user_action()
-            self._current_action = action
-            self.publish()
-            if action.verb.name == CoreVerbs.QUIT.value:
-                break
-
-    @property
-    def current_action(self):
-        return self._current_action
-
-    @property
-    def current_location(self):
-        return self.calcifer.location
+            match action.verb.type:
+                case VerbType.LOOK:
+                    self.calcifer.looking_at = self.calcifer.location
+                case VerbType.GESTURE:
+                    self.calcifer.gesture = Gesture(name=action.verb.name,
+                                                    description=action.verb.description
+                                                    if action.verb.description else Scene(f"You {action.verb.name}"))
+                case VerbType.QUIT:
+                    break
+                case _:
+                    self.failure_status = "I don't understand what you mean."
