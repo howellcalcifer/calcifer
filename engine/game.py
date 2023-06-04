@@ -1,8 +1,8 @@
 from pattern.observer import Subject, ObservedAttribute
-from ui.controllers import OutputController, InputController
+from ui.controllers import InputController
 from world.character import Character, Gesture
 from world.scene import Scene
-from world.verb import CoreVerbs, UserAction, UserVerb, VerbType
+from world.verb import VerbType
 
 
 class Game(Subject):

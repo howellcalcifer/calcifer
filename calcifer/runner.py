@@ -2,9 +2,9 @@
 from engine.game import Game
 from ui.controllers import OutputControllerCommandLine, InputControllerCommandLine
 from ui.text.parser import TextParser
-from world.verb import UserVerbDict, UserAction
+from world.verb import UserVerbDict
 from world.character import Character
-from engine.protagonist_output_observer import ProtagonistOutputObserver, ActionSceneDict
+from engine.protagonist_output_observer import ProtagonistOutputObserver
 from world.location import Location
 from world.scene import Scene
 

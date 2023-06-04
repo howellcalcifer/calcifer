@@ -54,7 +54,6 @@ class TestGame(TestCase):
         runs then he looks at himself
         """
         # given
-        expected_scene = self.calcifer.description
 
         # when
         self.ui_controller.await_user_action.side_effect = [UserAction(self.nod_verb, None),
