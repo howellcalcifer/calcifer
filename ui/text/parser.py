@@ -19,7 +19,7 @@ class TextParser:
         except KeyError:
             raise InvalidUserActionException(f"I don't know how to {words[0]}") from None
         except IndexError:
-            raise InvalidUserActionException(f"Don't give me the silent treatment") from None
+            raise InvalidUserActionException("Don't give me the silent treatment") from None
 
         if not verb.intransitive:
             try:
