@@ -46,9 +46,7 @@ class UserVerbDict(dict[str, UserVerb]):
             raw_struct = load(text_io, Loader)
         verb_dictionary = UserVerbDict()
 
-        intransitive = raw_struct['intransitive']
-
-        for verb, properties in intransitive.items():
+        for verb, properties in raw_struct.items():
             verb_dictionary[verb] = UserVerb(verb, VerbType(properties["type"]),
                                              Scene(properties["description"]) if "description" in properties else None)
         return verb_dictionary

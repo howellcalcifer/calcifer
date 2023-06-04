@@ -39,6 +39,8 @@ class TestWorld(TestCase):
         verb_dict_1['sit'] = UserVerb('sit', VerbType.POSTURE, None)
         verb_dict_1['abracadabra'] = UserVerb('abracadabra', VerbType.MAGIC, None)
         verb_dict_1['east'] = UserVerb('east', VerbType.MOVE, None)
+        verb_dict_1['take'] = UserVerb('take', VerbType.INVENTORY, None)
+        verb_dict_1['drop'] = UserVerb('drop', VerbType.INVENTORY, None)
 
         cases = [VerbDictTestCase("verbs_1.yaml", verb_dict_1), ]
 
