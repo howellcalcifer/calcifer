@@ -7,6 +7,6 @@ from world.scene import Scene
 
 
 @dataclasses.dataclass
-class Item(ABC):
+class Item:
     name: str
     description: Scene

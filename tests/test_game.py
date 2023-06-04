@@ -37,8 +37,7 @@ class TestGame(TestCase):
 
     def test_look_updates_to_start_location(self):
         """
-        Given a mock description scene for Calcifer, when the start routine
-        runs then he looks at himself
+        When the user gives a look command after game start, Calcifer looks at the start location
         """
         # when
         self.ui_controller.await_user_action.side_effect = [UserAction(self.look_verb, None),
@@ -50,8 +49,8 @@ class TestGame(TestCase):
 
     def test_nod_updates_gesture(self):
         """
-        Given a mock description scene for Calcifer, when the start routine
-        runs then he looks at himself
+        When the user gives a nod command after game start, Calcifer performs a nod gesture,
+        which has a default description
         """
         # given
 
@@ -66,8 +65,8 @@ class TestGame(TestCase):
 
     def test_bob_updates_gesture(self):
         """
-        Given a mock description scene for Calcifer, when the start routine
-        runs then he looks at himself
+        When the user gives a bob command after game start, Calcifer performs a nod gesture,
+        which has a bespoke description
         """
 
         # when

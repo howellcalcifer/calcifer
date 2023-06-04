@@ -33,5 +33,3 @@ def main():
     print("Starting game")
     game = Game(input_controller, calcifer)
     game.start()
-
-

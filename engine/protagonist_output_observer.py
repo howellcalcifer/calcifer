@@ -1,14 +1,8 @@
 from __future__ import annotations
 
-from typing import TypeAlias
-
 from pattern.observer import Observer
 from ui.controllers import OutputController
 from world.character import Character
-from world.scene import Scene
-from world.verb import UserAction
-
-ActionSceneDict: TypeAlias = dict[UserAction, Scene]
 
 
 class ProtagonistOutputObserver(Observer):

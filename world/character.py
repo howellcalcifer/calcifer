@@ -7,30 +7,26 @@ from pattern.observer import Subject, ObservedAttribute
 from world.scene import Scene
 
 
-class Describable(abc.ABC):
-    @property
-    @abc.abstractmethod
-    def name(self) -> str:
-        pass
-
-    @property
-    @abc.abstractmethod
-    def description(self) -> Scene:
-        pass
+class Describable(metaclass=abc.ABCMeta):
 
     @classmethod
     def __subclasshook__(cls, subclass):
         if cls is Describable:
-            if any("name" in C.__dict__ for C in subclass.__mro__) and any(
-                    "description" in C.__dict__ for C in subclass.__mro__):
-                return True
+            return cls._has_attribute(subclass, "name") and cls._has_attribute(subclass, "description")
         return NotImplemented
+
+    @staticmethod
+    def _has_attribute(subclass, attr_name) -> bool:
+        return any(
+            (attr_name in [f.name for f in dataclasses.fields(C)]) if dataclasses.is_dataclass(C)
+            else attr_name in C.__dict__
+            for C in subclass.__mro__)
 
 
 class Character(Subject):
     def __init__(self, name):
         super().__init__()
-        self.name = name
+        self._name = name
         self.gesture = None
         self.looking_at = None
 
@@ -38,6 +34,10 @@ class Character(Subject):
     description: Scene = ObservedAttribute('description')
     looking_at: Describable | None = ObservedAttribute('looking_at')
     gesture: Describable | None = ObservedAttribute('gesture')
+
+    @property
+    def name(self):
+        return self._name
 
 
 @dataclasses.dataclass(frozen=True)
