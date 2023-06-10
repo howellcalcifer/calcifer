@@ -16,9 +16,10 @@ class UserInputCase:
 
 
 nod_verb = UserVerb(name='nod', type=VerbType.GESTURE, description=None, intransitive=True)
-take_verb = UserVerb(name='take', type=VerbType.INVENTORY, description=None)
+take_verb = UserVerb(name='take', type=VerbType.INVENTORY, description=None, transitive=True)
 look_verb = UserVerb(name='look', type=VerbType.LOOK, intransitive=True, transitive=True)
-verbs = UserVerbDict([('nod', nod_verb), ('take', take_verb), ('look', look_verb)])
+quit_verb = UserVerb(name='quit', type=VerbType.QUIT, intransitive=True)
+verbs = UserVerbDict([('nod', nod_verb), ('take', take_verb), ('look', look_verb), ('quit', quit_verb)])
 rock_item = Item('rock')
 entity_dict = {'rock': rock_item}
 
@@ -36,10 +37,11 @@ class TestTranslate(TestCase):
                  UserInputCase(user_input="look rock", expect_invalid=False,
                                expected_action=UserAction(verb=look_verb, object=rock_item)),
                  UserInputCase(user_input="look", expect_invalid=False,
-                               expected_action=UserAction(verb=look_verb))]
+                               expected_action=UserAction(verb=look_verb)),
+                 UserInputCase(user_input="quit rock", expect_invalid=True)]
         self.parser.visible_entities = entity_dict
         for case in cases:
-            test_case_message = f"for input {case.user_input}"
+            test_case_message = f"for input '{case.user_input}'"
             if case.expect_invalid:
                 with self.assertRaises(InvalidUserActionException, msg=test_case_message):
                     self.parser.parse_user_action(case.user_input)

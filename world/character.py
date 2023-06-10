@@ -28,7 +28,7 @@ class Describable(abc.ABC):
     @staticmethod
     def _has_attribute(subclass, attr_name) -> bool:
         return any(
-            (attr_name in [f.name for f in dataclasses.fields(C)]) if dataclasses.is_dataclass(C)
+            (attr_name in (dict([(f.name, f) for f in dataclasses.fields(C)])) | C.__dict__) if dataclasses.is_dataclass(C)
             else attr_name in C.__dict__
             for C in subclass.__mro__)
 

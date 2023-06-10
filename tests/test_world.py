@@ -47,3 +47,8 @@ class TestWorld(TestCase):
         for case in cases:
             actual_dict = UserVerbDict.from_yaml("data.test", case.verb_file)
             self.assertEqual(case.expected_dict, actual_dict, msg=f"for {case.verb_file}")
+
+    def test_location_description(self):
+        input_scene = Scene("Here lies a scene, the scene is green")
+        location = Location("test", [], input_scene)
+        self.assertEqual(location.description, input_scene)

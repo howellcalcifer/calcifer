@@ -11,13 +11,13 @@ from world.verb import UserAction, UserVerb, VerbType
 
 class TestGame(TestCase):
     def setUp(self) -> None:
-        self.ui_controller = Mock(spec=InputController)
+        self.input_controller = Mock(spec=InputController)
         self.start_location = Mock(spec=Location)
         self.start_location.scene = Mock(spec=Scene)
         self.calcifer = Mock(spec=Character)
         self.calcifer.description = Mock(spec=Scene)
         self.calcifer.location = self.start_location
-        self.game = Game(self.ui_controller, self.calcifer)
+        self.game = Game(self.input_controller, self.calcifer)
         self.look_verb = UserVerb(name="look", type=VerbType.LOOK, description=None)
         self.nod_verb = UserVerb(name="nod", type=VerbType.GESTURE, description=None)
         self.quit_verb = UserVerb(name="quit", type=VerbType.QUIT, description=None)
@@ -29,7 +29,7 @@ class TestGame(TestCase):
         runs then he looks at himself
         """
         # when
-        self.ui_controller.await_user_action.return_value = UserAction(self.quit_verb, None)
+        self.input_controller.await_user_action.return_value = UserAction(self.quit_verb, None)
         self.game.start()
 
         # then
@@ -40,8 +40,8 @@ class TestGame(TestCase):
         When the user gives a look command after game start, Calcifer looks at the start location
         """
         # when
-        self.ui_controller.await_user_action.side_effect = [UserAction(self.look_verb, None),
-                                                            UserAction(self.quit_verb, None)]
+        self.input_controller.await_user_action.side_effect = [UserAction(self.look_verb, None),
+                                                               UserAction(self.quit_verb, None)]
         self.game.start()
 
         # then
@@ -55,8 +55,8 @@ class TestGame(TestCase):
         # given
 
         # when
-        self.ui_controller.await_user_action.side_effect = [UserAction(self.nod_verb, None),
-                                                            UserAction(self.quit_verb, None)]
+        self.input_controller.await_user_action.side_effect = [UserAction(self.nod_verb, None),
+                                                               UserAction(self.quit_verb, None)]
         self.game.start()
 
         # then
@@ -70,8 +70,8 @@ class TestGame(TestCase):
         """
 
         # when
-        self.ui_controller.await_user_action.side_effect = [UserAction(self.bob_verb, None),
-                                                            UserAction(self.quit_verb, None)]
+        self.input_controller.await_user_action.side_effect = [UserAction(self.bob_verb, None),
+                                                               UserAction(self.quit_verb, None)]
         self.game.start()
 
         # then

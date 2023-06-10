@@ -17,7 +17,7 @@ def main():
     protagonist_observer = ProtagonistOutputObserver(output_controller)
 
     print("Loading Calcifer")
-    location = Location("room", Scene("You see a room."), [])
+    location = Location("room",  [], Scene("You see a room."),)
     calcifer = Character("Calcifer")
     calcifer.description = Scene(
         "You are Calcifer. You have a thin blue face, a thin blue nose, curly green flames for hair"
