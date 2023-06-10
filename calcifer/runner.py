@@ -2,6 +2,7 @@
 from engine.game import Game
 from ui.controllers import OutputControllerCommandLine, InputControllerCommandLine
 from ui.text.parser import TextParser
+from world.item import Item
 from world.verb import UserVerbDict
 from world.character import Character
 from engine.protagonist_output_observer import ProtagonistOutputObserver
@@ -17,7 +18,7 @@ def main():
     protagonist_observer = ProtagonistOutputObserver(output_controller)
 
     print("Loading Calcifer")
-    location = Location("room",  [], Scene("You see a room."),)
+    location = Location("room",  [Item("rock")], Scene("You see a room."),)
     calcifer = Character("Calcifer")
     calcifer.description = Scene(
         "You are Calcifer. You have a thin blue face, a thin blue nose, curly green flames for hair"

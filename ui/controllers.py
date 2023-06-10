@@ -24,7 +24,8 @@ class OutputControllerCommandLine(OutputController):
 
     @staticmethod
     def _output(string):
-        print(textwrap.fill(string, width=76))
+        lines = ["\n".join(textwrap.wrap(line, 76)) for line in string.split("\n")]
+        print("\n".join(lines))
 
 
 class InputControllerCommandLine(InputController):

@@ -38,6 +38,16 @@ class TestOutputControllerCommandLine(TestCase):
         self.ui.show_scene(mock_scene)
         mocked_print.assert_called_with(expected_output)
 
+    @patch('builtins.print')
+    def test_show_scene_preserves_newline(self, mocked_print):
+        """ wrapping doesn't lose existing new lines"""
+        input_description = "This is a line.\n\nThis is another line."
+        expected_output = "This is a line.\n\nThis is another line."
+        mock_scene = Mock(spec=Scene)
+        mock_scene.text = input_description
+        self.ui.show_scene(mock_scene)
+        mocked_print.assert_called_with(expected_output)
+
 
 @dataclasses.dataclass
 class UserInput:

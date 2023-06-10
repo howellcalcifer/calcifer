@@ -52,3 +52,8 @@ class TestWorld(TestCase):
         input_scene = Scene("Here lies a scene, the scene is green")
         location = Location("test", [], input_scene)
         self.assertEqual(location.description, input_scene)
+
+    def test_location_description_single_item(self):
+        input_scene = Scene("A scene.")
+        location = Location("test", [Item("rock")], input_scene)
+        self.assertEqual("A scene.\n\nA rock is here.",location.description.text)

@@ -16,7 +16,12 @@ class Location:
 
     @property
     def description(self) -> Scene:
-        return Scene(self._description.text)
+        item_text = ",".join(f"{self._item_article(i > 0, item)} {item.name}" for i, item in enumerate(self.items))
+        return Scene(f"{self._description.text}\n\n{item_text} is here." if item_text else self._description.text)
+
+    @staticmethod
+    def _item_article(capitalise: bool, _):
+        return 'a' if capitalise else 'A'
 
     @description.setter
     def description(self, scene: Scene):
