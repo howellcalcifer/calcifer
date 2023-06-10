@@ -4,6 +4,7 @@ from unittest.mock import Mock, call
 from engine.protagonist_output_observer import ProtagonistOutputObserver
 from ui.controllers import OutputController
 from world.character import Character, Gesture
+from world.item import Inventory
 from world.location import Location
 from world.scene import Scene
 
@@ -14,10 +15,10 @@ class TestIntegrateCharacterActions(TestCase):
         self.output_controller = Mock(spec=OutputController)
         start_location_scene = Mock(spec=Scene)
         start_location_scene.text="Here is the start location"
-        self.start_location = Location("Start", [], description_init=start_location_scene)
+        self.start_location = Location("Start", Inventory(), description_init=start_location_scene)
 
         self.calcifer_description = "This is Calcifer"
-        self.calcifer = Character("Calcifer")
+        self.calcifer = Character("Calcifer", Inventory())
         self.calcifer.location = Scene(self.calcifer_description)
 
         self.output_observer = ProtagonistOutputObserver(self.output_controller)

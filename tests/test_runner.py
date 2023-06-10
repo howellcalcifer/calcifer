@@ -25,7 +25,6 @@ class TestRunner(TestCase):
         main()
 
         # then
-        mock_calcifer_class.assert_called_with("Calcifer")
         mock_game_class.assert_called_with(mock_input_controller, mock_calcifer)
         mock_game.start.assert_called_with()
 

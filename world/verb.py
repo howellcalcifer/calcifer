@@ -35,11 +35,17 @@ class UserVerb:
     transitive: Optional[bool] = None
     intransitive: Optional[bool] = None
 
+    def __hash__(self):
+        return hash(self.name)
+
 
 @dataclasses.dataclass(frozen=True)
 class UserAction:
     verb: UserVerb
     object: Optional[Item | Character] = None
+
+    def __hash__(self):
+        return hash((self.verb, self.object))
 
 
 class UserVerbDict(dict[str, UserVerb]):

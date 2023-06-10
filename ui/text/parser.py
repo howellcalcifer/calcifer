@@ -1,5 +1,6 @@
 from world.character import Character
 from world.item import Item
+from world.location import Location
 from world.verb import UserAction, UserVerbDict
 
 
@@ -8,9 +9,9 @@ class InvalidUserActionException(Exception):
 
 
 class TextParser:
-    def __init__(self, verbs: UserVerbDict):
+    def __init__(self, verbs: UserVerbDict, location: Location):
         self.verbs = verbs
-        self.visible_entities: dict[str, Item | Character] = {}
+        self.visible_entities: dict[str, Item | Character] = dict([(i.name, i) for i in location.inventory])
 
     def parse_user_action(self, text: str) -> UserAction:
         words = text.split()

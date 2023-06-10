@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import abc
 import dataclasses
+from typing import Optional
 
 from pattern.observer import Subject, ObservedAttribute
+from world.item import Inventory
 from world.scene import Scene
 
 
@@ -28,26 +30,31 @@ class Describable(abc.ABC):
     @staticmethod
     def _has_attribute(subclass, attr_name) -> bool:
         return any(
-            (attr_name in (dict([(f.name, f) for f in dataclasses.fields(C)])) | C.__dict__) if dataclasses.is_dataclass(C)
+            (attr_name in (
+                dict([(f.name, f) for f in dataclasses.fields(C)])) | C.__dict__) if dataclasses.is_dataclass(C)
             else attr_name in C.__dict__
             for C in subclass.__mro__)
 
 
 class Character(Subject):
-    def __init__(self, name):
+    def __init__(self, name: str, inventory: Inventory):
         super().__init__()
-        self._name = name
-        self.gesture = None
-        self.looking_at = None
+        self._name: str = name
+        self.gesture: Optional[Gesture] = None
+        self.looking_at: Optional[Describable] = None
+        self.inventory: Inventory = inventory
 
     location: Scene = ObservedAttribute('location')
     description: Scene = ObservedAttribute('description')
-    looking_at: Describable | None = ObservedAttribute('looking_at')
-    gesture: Describable | None = ObservedAttribute('gesture')
+    looking_at: Optional[Describable] = ObservedAttribute('looking_at')
+    gesture: Optional[Describable] = ObservedAttribute('gesture')
 
     @property
     def name(self):
         return self._name
+
+    def __hash__(self):
+        return hash(self.name)
 
 
 @dataclasses.dataclass(frozen=True)

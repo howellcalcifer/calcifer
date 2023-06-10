@@ -26,5 +26,8 @@ class Game(Subject):
                                                     if action.verb.description else Scene(f"You {action.verb.name}"))
                 case VerbType.QUIT:
                     break
+                case VerbType.INVENTORY:
+                    self.calcifer.inventory.add(action.object)
+                    self.calcifer.location.inventory.remove(action.object)
                 case _:
                     self.failure_status = "I don't understand what you mean."
