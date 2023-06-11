@@ -2,13 +2,10 @@ from __future__ import annotations
 
 import abc
 import dataclasses
-from importlib.resources import files
 from typing import Optional
 
-from yaml import load, Loader
-
 from pattern.observer import Subject, ObservedAttribute
-from world.item import Inventory, ItemMapping
+from world.item import Inventory
 from world.location import Location
 from world.scene import Scene
 
@@ -65,34 +62,6 @@ class Character(Subject):
 
     def __hash__(self):
         return hash(self.name)
-
-
-class CharacterMapping(dict[str, Character]):
-
-    @classmethod
-    def from_yaml(cls, package: str, resource: str, items: ItemMapping) -> CharacterMapping:
-        with (files(package) / resource).open('r') as text_io:
-            raw_struct = load(text_io, Loader)
-        mapping = cls()
-        for name, properties in raw_struct.items():
-            inventory = cls.load_inventory(properties, items)
-            args = (name, inventory)
-            kwargs = {}
-            for prop in ['description', 'display_name']:
-                try:
-                    kwargs[prop] = properties[prop]
-                except KeyError:
-                    pass
-            mapping[name] = Character(*args, **kwargs)
-        return mapping
-
-    @staticmethod
-    def load_inventory(yaml_character, items):
-        inventory = Inventory()
-        if 'inventory' in yaml_character:
-            for item_name in yaml_character['inventory']:
-                inventory.add(items[item_name])
-        return inventory
 
 
 @dataclasses.dataclass(frozen=True)

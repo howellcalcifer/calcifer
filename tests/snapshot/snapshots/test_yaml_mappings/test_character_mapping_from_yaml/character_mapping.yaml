@@ -1,4 +1,4 @@
-!!python/object/new:world.character.CharacterMapping
+!!python/object/new:world.mappings.CharacterMapping
 dictitems:
   calcifer: !!python/object:world.character.Character
     _description: 'You are Calcifer. You have a thin blue face, a thin blue nose,

@@ -1,10 +1,7 @@
 from __future__ import annotations
 
 import dataclasses
-from importlib.resources import files
 from typing import Optional, Iterator, MutableMapping, Dict
-
-from yaml import load, Loader
 
 from pattern.observer import Subject
 from world.scene import Scene
@@ -21,24 +18,6 @@ class Item:
 
     def __str__(self):
         return self.display_name if self.display_name else self.name
-
-
-class ItemMapping(dict[str, Item]):
-    @classmethod
-    def from_yaml(cls, package: str, resource: str) -> ItemMapping:
-        with (files(package) / resource).open('r') as text_io:
-            raw_struct = load(text_io, Loader)
-        item_mapping = ItemMapping()
-        for name, properties in raw_struct.items():
-            args = (name,)
-            kwargs = {}
-            for prop in ['description', 'display_name']:
-                try:
-                    kwargs[prop] = properties[prop]
-                except KeyError:
-                    pass
-            item_mapping[name] = Item(*args, **kwargs)
-        return item_mapping
 
 
 class Inventory(MutableMapping[str, Item], Subject):

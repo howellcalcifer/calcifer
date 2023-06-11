@@ -1,7 +1,6 @@
 import yaml
 
-from world.character import CharacterMapping
-from world.item import ItemMapping
+from world.mappings import LocationMapping, CharacterMapping, ItemMapping
 from world.verb import VerbMapping
 
 
@@ -19,3 +18,10 @@ def test_character_mapping_from_yaml(snapshot):
     item_mapping = ItemMapping.from_yaml("data.test", "items_1.yaml")
     actual_mapping = CharacterMapping.from_yaml("data.test", "characters_1.yaml", item_mapping)
     snapshot.assert_match(yaml.dump(actual_mapping), 'character_mapping.yaml')
+
+
+def test_location_mapping_from_yaml(snapshot):
+    item_mapping = ItemMapping.from_yaml("data.test", "items_1.yaml")
+    character_mapping = CharacterMapping.from_yaml("data.test", "characters_1.yaml", item_mapping)
+    location_mapping = LocationMapping.from_yaml("data.test", "locations_1.yaml", item_mapping, character_mapping)
+    snapshot.assert_match(yaml.dump(location_mapping), 'location_mapping.yaml')

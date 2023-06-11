@@ -1,4 +1,4 @@
-!!python/object/new:world.item.ItemMapping
+!!python/object/new:world.mappings.ItemMapping
 dictitems:
   lock: !!python/object:world.item.Item
     description: null

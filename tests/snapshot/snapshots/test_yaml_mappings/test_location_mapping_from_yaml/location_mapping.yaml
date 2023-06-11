@@ -1,0 +1,15 @@
+!!python/object/new:world.mappings.LocationMapping
+dictitems:
+  start: !!python/object:world.location.Location
+    _description: A library in a castle.
+    inventory: !!python/object:world.item.Inventory
+      _items:
+        rock: !!python/object:world.item.Item
+          description: A fist-sized lump of stone.
+          display_name: null
+          name: rock
+      _subscribers: []
+      changed_observed_attribute: null
+      item_incoming: null
+      item_outgoing: null
+    name: start
