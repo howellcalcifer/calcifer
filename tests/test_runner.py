@@ -2,7 +2,7 @@ from unittest import TestCase
 from unittest.mock import patch
 
 from calcifer.runner import main
-from world.verb import UserAction, UserVerb, VerbType
+from world.verb import UserAction, Verb, VerbType
 
 
 class TestRunner(TestCase):
@@ -40,7 +40,8 @@ class TestRunner(TestCase):
         mock_input.return_value = "quit"
         mock_text_parser = mock_text_parser_class.return_value
         mock_ui_controller = mock_ui_controller_class.return_value
-        mock_ui_controller.await_user_action.return_value = UserAction(UserVerb("quit", VerbType.QUIT, None), None)
+        mock_ui_controller.await_user_action.return_value = UserAction(
+            Verb("quit", VerbType.QUIT, None, transitive=False, intransitive=True), None)
 
         # when
         main()
@@ -51,19 +52,23 @@ class TestRunner(TestCase):
     @patch('builtins.input')
     @patch('calcifer.runner.TextParser', autospec=True)
     @patch('calcifer.runner.UserVerbDict', autospec=True)
+    @patch('calcifer.runner.CurrentContainerFactory', autospec=True)
     def test_main_loads_parser_with_verbs(self,
+                                          mock_current_container_factory_class,
                                           mock_user_verb_dictionary_class, mock_text_parser_class, _):
         """
-        Running play loads the verb dictionary into the parser
+        Running play loads the verb dictionary and container factory into the parser
         """
         # given
+        mock_current_container_factory = mock_current_container_factory_class.return_value
         mock_user_verb_dictionary = mock_user_verb_dictionary_class.from_yaml.return_value
         mock_text_parser = mock_text_parser_class.return_value
-        mock_text_parser.parse_user_action.return_value = UserAction(UserVerb("quit", VerbType.QUIT, None), None)
+        mock_text_parser.parse_user_action.return_value = UserAction(
+            Verb("quit", VerbType.QUIT, None, transitive=False, intransitive=True), None)
 
         # when
         main()
 
         # then
         mock_user_verb_dictionary_class.from_yaml.assert_called_with('data', 'verbs.yaml')
-        mock_text_parser_class.assert_called_with(mock_user_verb_dictionary)
+        mock_text_parser_class.assert_called_with(mock_user_verb_dictionary, mock_current_container_factory)

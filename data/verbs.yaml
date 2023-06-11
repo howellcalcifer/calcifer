@@ -32,8 +32,10 @@ look:
 take:
   transitive: true
   type: inventory
-  direction: in
+  source: ground
+  destination: inventory
 drop:
   transitive: true
   type: inventory
-  direction: out
+  source: inventory
+  destination: ground

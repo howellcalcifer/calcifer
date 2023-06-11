@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 pyyaml = "*"
+pytest-snapshot = "*"
 
 [dev-packages]
 ruff = "*"

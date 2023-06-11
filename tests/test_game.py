@@ -7,7 +7,7 @@ from world.character import Character
 from world.item import Item, Inventory
 from world.location import Location
 from world.scene import Scene
-from world.verb import UserAction, UserVerb, VerbType
+from world.verb import UserAction, Verb, VerbType
 
 
 class TestGame(TestCase):
@@ -21,11 +21,15 @@ class TestGame(TestCase):
         self.calcifer.location = self.start_location
         self.calcifer.inventory = Mock(spec=Inventory)
         self.game = Game(self.input_controller, self.calcifer)
-        self.look_verb = UserVerb(name="look", type=VerbType.LOOK, description=None)
-        self.nod_verb = UserVerb(name="nod", type=VerbType.GESTURE, description=None)
-        self.quit_verb = UserVerb(name="quit", type=VerbType.QUIT, description=None)
-        self.take_verb = UserVerb(name="take", type=VerbType.INVENTORY, description=None)
-        self.bob_verb = UserVerb(name="bob", type=VerbType.GESTURE, description=Scene("You bob around a bit"))
+        self.look_verb = Verb(name="look", type=VerbType.LOOK, description=None, transitive=True, intransitive=True)
+        self.nod_verb = Verb(name="nod", type=VerbType.GESTURE, description=None, transitive=True, intransitive=False)
+        self.quit_verb = Verb(name="quit", type=VerbType.QUIT, description=None, intransitive=True, transitive=False)
+        self.take_verb = Verb(name="take", type=VerbType.INVENTORY, description=None, intransitive=False,
+                              transitive=False, )
+        self.drop_verb = Verb(name="drop", type=VerbType.INVENTORY, description=None, intransitive=False,
+                              transitive=False)
+        self.bob_verb = Verb(name="bob", type=VerbType.GESTURE, description=Scene("You bob around a bit"),
+                             transitive=False, intransitive=True)
         self.rock_item = Item(name="rock")
 
     def test_start_outputs_calcifer_description(self):
@@ -86,9 +90,23 @@ class TestGame(TestCase):
     def test_take_rock(self):
         """ when the user gives a take rock command, the rock is added to Calcifer's inventory
         and removed from the location"""
-        self.input_controller.await_user_action.side_effect = [UserAction(self.take_verb, self.rock_item),
-                                                               UserAction(self.quit_verb, None)]
+        self.input_controller.await_user_action.side_effect = [
+            UserAction(self.take_verb, self.rock_item, source=self.calcifer.location.inventory,
+                       destination=self.calcifer.inventory),
+            UserAction(self.quit_verb, None)]
         self.game.start()
         # then
         self.calcifer.inventory.add.assert_called_with(self.rock_item)
         self.calcifer.location.inventory.remove.assert_called_with(self.rock_item)
+
+    def test_drop_rock(self):
+        """ when the user gives a drop rock command, the rock is removed from Calcifer's inventory
+        and added to the location"""
+        self.input_controller.await_user_action.side_effect = [
+            UserAction(self.drop_verb, self.rock_item, source=self.calcifer.inventory,
+                       destination=self.calcifer.location.inventory),
+            UserAction(self.quit_verb, None)]
+        self.game.start()
+        # then
+        self.calcifer.inventory.remove.assert_called_with(self.rock_item)
+        self.calcifer.location.inventory.add.assert_called_with(self.rock_item)

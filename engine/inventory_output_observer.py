@@ -1,4 +1,4 @@
-from pattern.observer import Observer, Subject
+from pattern.observer import Observer
 from ui.controllers import OutputController
 from world.item import Inventory
 from world.scene import Scene

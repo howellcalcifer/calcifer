@@ -1,0 +1,69 @@
+!!python/object/new:world.verb.UserVerbDict
+dictitems:
+  abracadabra: !!python/object:world.verb.Verb
+    description: !!python/object:world.scene.Scene
+      text: null
+    intransitive: true
+    name: abracadabra
+    transitive: false
+    type: !!python/object/apply:builtins.getattr
+    - &id001 !!python/name:world.verb.VerbType ''
+    - MAGIC
+  bow: !!python/object:world.verb.Verb
+    description: !!python/object:world.scene.Scene
+      text: You bow gracefully
+    intransitive: true
+    name: bow
+    transitive: false
+    type: &id003 !!python/object/apply:builtins.getattr
+    - *id001
+    - GESTURE
+  drop: !!python/object:world.verb.InventoryVerb
+    description: !!python/object:world.scene.Scene
+      text: null
+    destination: &id005 !!python/object/apply:builtins.getattr
+    - &id002 !!python/name:engine.container_factory.CurrentContainerType ''
+    - LOCATION_ITEMS
+    intransitive: false
+    name: drop
+    source: &id004 !!python/object/apply:builtins.getattr
+    - *id002
+    - PROTAGONIST_ITEMS
+    transitive: true
+    type: &id006 !!python/object/apply:builtins.getattr
+    - *id001
+    - INVENTORY
+  east: !!python/object:world.verb.Verb
+    description: !!python/object:world.scene.Scene
+      text: null
+    intransitive: false
+    name: east
+    transitive: true
+    type: !!python/object/apply:builtins.getattr
+    - *id001
+    - MOVE
+  sit: !!python/object:world.verb.Verb
+    description: !!python/object:world.scene.Scene
+      text: null
+    intransitive: true
+    name: sit
+    transitive: false
+    type: !!python/object/apply:builtins.getattr
+    - *id001
+    - POSTURE
+  smile: !!python/object:world.verb.Verb
+    description: !!python/object:world.scene.Scene
+      text: null
+    intransitive: true
+    name: smile
+    transitive: false
+    type: *id003
+  take: !!python/object:world.verb.InventoryVerb
+    description: !!python/object:world.scene.Scene
+      text: null
+    destination: *id004
+    intransitive: false
+    name: take
+    source: *id005
+    transitive: true
+    type: *id006

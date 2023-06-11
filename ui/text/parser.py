@@ -1,7 +1,5 @@
-from world.character import Character
-from world.item import Item
-from world.location import Location
-from world.verb import UserAction, UserVerbDict
+from engine.container_factory import CurrentContainerFactory, CurrentContainerType
+from world.verb import UserAction, UserVerbDict, VerbType
 
 
 class InvalidUserActionException(Exception):
@@ -9,9 +7,9 @@ class InvalidUserActionException(Exception):
 
 
 class TextParser:
-    def __init__(self, verbs: UserVerbDict, location: Location):
+    def __init__(self, verbs: UserVerbDict, container_factory: CurrentContainerFactory):
         self.verbs = verbs
-        self.visible_entities: dict[str, Item | Character] = dict([(i.name, i) for i in location.inventory])
+        self._container_factory = container_factory
 
     def parse_user_action(self, text: str) -> UserAction:
         words = text.split()
@@ -24,7 +22,7 @@ class TextParser:
             raise InvalidUserActionException("Don't give me the silent treatment") from None
 
         try:
-            obj = self.visible_entities[words[1]]
+            obj = self._container_factory.create(CurrentContainerType.VISIBLE)[words[1]]
             if not verb.transitive:
                 raise InvalidUserActionException(f"You can't {verb.name} the {obj}")
         except KeyError:
@@ -33,4 +31,10 @@ class TextParser:
             if not verb.intransitive:
                 raise InvalidUserActionException(f"You need to {verb.name} something") from None
             obj = None
-        return UserAction(verb=verb, object=obj)
+        if verb.type == VerbType.INVENTORY:
+            source = self._container_factory.create(verb.source)
+            destination = self._container_factory.create(verb.destination)
+        else:
+            source = None
+            destination = None
+        return UserAction(verb=verb, object=obj, source=source, destination=destination)

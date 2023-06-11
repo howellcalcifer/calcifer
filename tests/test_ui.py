@@ -6,7 +6,7 @@ from unittest.mock import patch, Mock, call
 from ui.controllers import OutputControllerCommandLine, InputControllerCommandLine
 from ui.text.parser import TextParser, InvalidUserActionException
 from world.scene import Scene
-from world.verb import UserAction, UserVerb, VerbType
+from world.verb import UserAction, Verb, VerbType
 
 
 class TestOutputControllerCommandLine(TestCase):
@@ -61,8 +61,8 @@ class UserInputCase:
     expected_action: UserAction
 
 
-nod_verb = UserVerb(name="nod", type=VerbType.GESTURE, description=None)
-frown_verb = UserVerb(name="frown", type=VerbType.GESTURE, description=None)
+nod_verb = Verb(name="nod", type=VerbType.GESTURE, description=None, intransitive=True, transitive=False)
+frown_verb = Verb(name="frown", type=VerbType.GESTURE, description=None, intransitive=True, transitive=False)
 nod_action = UserAction(verb=nod_verb, object=None)
 frown_action = UserAction(verb=frown_verb, object=None)
 

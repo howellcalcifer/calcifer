@@ -1,4 +1,5 @@
 # This is a game in which you are the fire demon calcifer
+from engine.container_factory import CurrentContainerFactory
 from engine.game import Game
 from engine.inventory_output_observer import InventoryOutputObserver
 from ui.controllers import OutputControllerCommandLine, InputControllerCommandLine
@@ -34,10 +35,12 @@ def main():
     calcifer.subscribe(observer=protagonist_observer)
 
     print("Loading input controller")
-    parser = TextParser(verbs, location)
+    current_container_factory = CurrentContainerFactory()
+    current_container_factory.location = location
+    current_container_factory.protagonist = calcifer
+    parser = TextParser(verbs, current_container_factory)
     input_controller = InputControllerCommandLine(parser)
 
     print("Starting game")
     game = Game(input_controller, calcifer)
     game.start()
-l

@@ -27,7 +27,7 @@ class Game(Subject):
                 case VerbType.QUIT:
                     break
                 case VerbType.INVENTORY:
-                    self.calcifer.inventory.add(action.object)
-                    self.calcifer.location.inventory.remove(action.object)
+                    action.source.remove(action.object)
+                    action.destination.add(action.object)
                 case _:
                     self.failure_status = "I don't understand what you mean."

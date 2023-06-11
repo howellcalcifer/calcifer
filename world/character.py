@@ -6,6 +6,7 @@ from typing import Optional
 
 from pattern.observer import Subject, ObservedAttribute
 from world.item import Inventory
+from world.location import Location
 from world.scene import Scene
 
 
@@ -44,7 +45,7 @@ class Character(Subject):
         self.looking_at: Optional[Describable] = None
         self.inventory: Inventory = inventory
 
-    location: Scene = ObservedAttribute('location')
+    location: Location = ObservedAttribute('location')
     description: Scene = ObservedAttribute('description')
     looking_at: Optional[Describable] = ObservedAttribute('looking_at')
     gesture: Optional[Describable] = ObservedAttribute('gesture')

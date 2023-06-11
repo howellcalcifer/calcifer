@@ -1,9 +1,11 @@
 import dataclasses
 from typing import Optional
 from unittest import TestCase
+from unittest.mock import Mock
 
-from world.item import Item
-from world.verb import UserAction, UserVerb, UserVerbDict, VerbType
+from engine.container_factory import CurrentContainerFactory, CurrentContainerType
+from world.item import Item, Inventory
+from world.verb import UserAction, Verb, UserVerbDict, VerbType, InventoryVerb
 from ui.text.parser import TextParser, InvalidUserActionException
 
 
@@ -15,17 +17,37 @@ class UserInputCase:
     expect_invalid_message: Optional[str] = None
 
 
-nod_verb = UserVerb(name='nod', type=VerbType.GESTURE, description=None, intransitive=True)
-take_verb = UserVerb(name='take', type=VerbType.INVENTORY, description=None, transitive=True)
-look_verb = UserVerb(name='look', type=VerbType.LOOK, intransitive=True, transitive=True)
-quit_verb = UserVerb(name='quit', type=VerbType.QUIT, intransitive=True)
+nod_verb = Verb(name='nod', type=VerbType.GESTURE, description=None, intransitive=True, transitive=False)
+take_verb = InventoryVerb(name='take', type=VerbType.INVENTORY, description=None, transitive=True, intransitive=False,
+                          source=CurrentContainerType.LOCATION_ITEMS,
+                          destination=CurrentContainerType.PROTAGONIST_ITEMS)
+drop_verb = InventoryVerb(name='drop', type=VerbType.INVENTORY, description=None, transitive=True, intransitive=False,
+                          source=CurrentContainerType.PROTAGONIST_ITEMS,
+                          destination=CurrentContainerType.LOCATION_ITEMS)
+look_verb = Verb(name='look', type=VerbType.LOOK, description=None, intransitive=True, transitive=True)
+quit_verb = Verb(name='quit', type=VerbType.QUIT, description=None, intransitive=True, transitive=False)
 verbs = UserVerbDict([('nod', nod_verb), ('take', take_verb), ('look', look_verb), ('quit', quit_verb)])
 rock_item = Item('rock')
 entity_dict = {'rock': rock_item}
 
 
 class TestTranslate(TestCase):
-    parser = TextParser(verbs)
+    def setUp(self) -> None:
+        container_factory = Mock(spec=CurrentContainerFactory)
+        self.inventory = Inventory()
+        self.ground = Inventory()
+        self.visible = Inventory()
+        self.visible.add(Item("rock"))
+        container_factory.create.side_effect = self._mock_create_current_container
+        self.parser = TextParser(verbs, container_factory)
+
+    def _mock_create_current_container(self, typ: CurrentContainerType):
+        if typ == CurrentContainerType.VISIBLE:
+            return self.visible
+        if typ == CurrentContainerType.LOCATION_ITEMS:
+            return self.ground
+        if typ == CurrentContainerType.PROTAGONIST_ITEMS:
+            return self.inventory
 
     def test_translate_user_action(self):
         cases = [UserInputCase(user_input="nod", expect_invalid=False,
@@ -33,7 +55,11 @@ class TestTranslate(TestCase):
                  UserInputCase(user_input="move", expect_invalid=True),
                  UserInputCase(user_input="take", expect_invalid=True),
                  UserInputCase(user_input="take rock", expect_invalid=False,
-                               expected_action=UserAction(verb=take_verb, object=rock_item)),
+                               expected_action=UserAction(verb=take_verb, object=rock_item, source=self.inventory,
+                                                          destination=self.ground)),
+                 UserInputCase(user_input="take rock", expect_invalid=False,
+                               expected_action=UserAction(verb=take_verb, object=rock_item, source=self.ground,
+                                                          destination=self.inventory)),
                  UserInputCase(user_input="look rock", expect_invalid=False,
                                expected_action=UserAction(verb=look_verb, object=rock_item)),
                  UserInputCase(user_input="look", expect_invalid=False,
