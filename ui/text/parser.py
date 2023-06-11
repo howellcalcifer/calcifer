@@ -1,5 +1,5 @@
 from engine.container_factory import CurrentContainerFactory, CurrentContainerType
-from world.verb import UserAction, UserVerbDict, VerbType
+from world.verb import UserAction, VerbMapping, VerbType
 
 
 class InvalidUserActionException(Exception):
@@ -7,7 +7,7 @@ class InvalidUserActionException(Exception):
 
 
 class TextParser:
-    def __init__(self, verbs: UserVerbDict, container_factory: CurrentContainerFactory):
+    def __init__(self, verbs: VerbMapping, container_factory: CurrentContainerFactory):
         self.verbs = verbs
         self._container_factory = container_factory
 

@@ -65,12 +65,12 @@ class UserAction:
         return hash((self.verb, self.object))
 
 
-class UserVerbDict(dict[str, Verb]):
+class VerbMapping(dict[str, Verb]):
     @classmethod
-    def from_yaml(cls, package: str, resource: str) -> UserVerbDict:
+    def from_yaml(cls, package: str, resource: str) -> VerbMapping:
         with (files(package) / resource).open('r') as text_io:
             raw_struct = load(text_io, Loader)
-        verb_dictionary = UserVerbDict()
+        verb_dictionary = VerbMapping()
 
         for verb, properties in raw_struct.items():
             verb_args = (verb, VerbType(properties["type"]),

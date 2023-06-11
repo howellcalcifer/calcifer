@@ -5,7 +5,7 @@ from unittest.mock import Mock
 
 from engine.container_factory import CurrentContainerFactory, CurrentContainerType
 from world.item import Item, Inventory
-from world.verb import UserAction, Verb, UserVerbDict, VerbType, InventoryVerb
+from world.verb import UserAction, Verb, VerbMapping, VerbType, InventoryVerb
 from ui.text.parser import TextParser, InvalidUserActionException
 
 
@@ -26,7 +26,7 @@ drop_verb = InventoryVerb(name='drop', type=VerbType.INVENTORY, description=None
                           destination=CurrentContainerType.LOCATION_ITEMS)
 look_verb = Verb(name='look', type=VerbType.LOOK, description=None, intransitive=True, transitive=True)
 quit_verb = Verb(name='quit', type=VerbType.QUIT, description=None, intransitive=True, transitive=False)
-verbs = UserVerbDict([('nod', nod_verb), ('take', take_verb), ('look', look_verb), ('quit', quit_verb)])
+verbs = VerbMapping([('nod', nod_verb), ('take', take_verb), ('look', look_verb), ('quit', quit_verb)])
 rock_item = Item('rock')
 entity_dict = {'rock': rock_item}
 

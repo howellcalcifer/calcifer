@@ -7,7 +7,7 @@ from world.character import Describable, Character, Gesture
 from world.item import Item, Inventory
 from world.location import Location
 from world.scene import Scene
-from world.verb import Verb, UserVerbDict
+from world.verb import Verb, VerbMapping
 
 
 @dataclasses.dataclass
@@ -19,7 +19,7 @@ class DescribableTestCase:
 @dataclasses.dataclass
 class VerbDictTestCase:
     verb_file: str
-    expected_dict: UserVerbDict
+    expected_dict: VerbMapping
 
 
 class TestWorld(TestCase):

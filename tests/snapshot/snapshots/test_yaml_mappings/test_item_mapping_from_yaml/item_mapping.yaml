@@ -1,0 +1,14 @@
+!!python/object/new:world.item.ItemMapping
+dictitems:
+  lock: !!python/object:world.item.Item
+    description: null
+    display_name: lock of hair
+    name: lock
+  rock: !!python/object:world.item.Item
+    description: A fist-sized lump of stone.
+    display_name: null
+    name: rock
+  sock: !!python/object:world.item.Item
+    description: A knitted, striped sock.
+    display_name: null
+    name: sock
