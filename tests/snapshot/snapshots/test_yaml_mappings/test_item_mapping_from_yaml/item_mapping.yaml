@@ -5,10 +5,12 @@ dictitems:
     display_name: lock of hair
     name: lock
   rock: !!python/object:world.item.Item
-    description: A fist-sized lump of stone.
+    description: !!python/object:world.scene.Scene
+      text: A fist-sized lump of stone.
     display_name: null
     name: rock
   sock: !!python/object:world.item.Item
-    description: A knitted, striped sock.
+    description: !!python/object:world.scene.Scene
+      text: A knitted, striped sock.
     display_name: null
     name: sock

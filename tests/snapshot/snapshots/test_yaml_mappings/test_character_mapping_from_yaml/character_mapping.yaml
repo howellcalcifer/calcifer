@@ -1,12 +1,13 @@
 !!python/object/new:world.mappings.CharacterMapping
 dictitems:
   calcifer: !!python/object:world.character.Character
-    _description: 'You are Calcifer. You have a thin blue face, a thin blue nose,
-      curly green flames for hair and eyebrows, a purple flaming mouth, and savage
-      teeth. Your eyes are orange flames with purple pupils. You do not have any evident
-      lower body.
+    _description: !!python/object:world.scene.Scene
+      text: 'You are Calcifer. You have a thin blue face, a thin blue nose, curly
+        green flames for hair and eyebrows, a purple flaming mouth, and savage teeth.
+        Your eyes are orange flames with purple pupils. You do not have any evident
+        lower body.
 
-      '
+        '
     _display_name: Calcifer
     _gesture: null
     _looking_at: null
@@ -20,7 +21,8 @@ dictitems:
           display_name: lock of hair
           name: lock
         sock: !!python/object:world.item.Item
-          description: A knitted, striped sock.
+          description: !!python/object:world.scene.Scene
+            text: A knitted, striped sock.
           display_name: null
           name: sock
       _subscribers: []

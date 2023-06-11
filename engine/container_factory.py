@@ -5,7 +5,6 @@ from typing import Optional, Mapping, Iterator
 
 from world.character import Character
 from world.item import Item
-from world.location import Location
 
 
 class CurrentContainerType(Enum):

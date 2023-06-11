@@ -4,9 +4,9 @@ from unittest import TestCase
 from unittest.mock import patch, Mock, call
 
 from ui.controllers import OutputControllerCommandLine, InputControllerCommandLine
-from ui.text.parser import TextParser, InvalidUserActionException
+from ui.text.parser import InvalidUserActionException
 from world.scene import Scene
-from world.verb import UserAction, Verb, VerbType, VerbMapping
+from world.verb import UserAction, Verb, VerbType
 
 
 class TestOutputControllerCommandLine(TestCase):

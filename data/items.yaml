@@ -1,0 +1,6 @@
+rock:
+  description: "A fist-sized lump of stone."
+sock:
+  description: "A knitted, striped sock."
+lock:
+  display_name: "lock of hair"

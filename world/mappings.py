@@ -7,6 +7,7 @@ from yaml import load, Loader
 from world.character import Character
 from world.item import Inventory, Item
 from world.location import Location
+from world.scene import Scene
 
 
 class LocationMapping(dict[str, Location]):
@@ -21,7 +22,7 @@ class LocationMapping(dict[str, Location]):
             args = (name, inventory)
             kwargs = {}
             try:
-                kwargs['description_init'] = properties['description']
+                kwargs['description_init'] = Scene(properties['description'])
             except KeyError:
                 pass
             mapping[name] = Location(*args, **kwargs)
@@ -47,11 +48,14 @@ class CharacterMapping(dict[str, Character]):
             inventory = cls.load_inventory(properties, items)
             args = (name, inventory)
             kwargs = {}
-            for prop in ['description', 'display_name']:
-                try:
-                    kwargs[prop] = properties[prop]
-                except KeyError:
-                    pass
+            try:
+                kwargs['description'] = Scene(properties['description'])
+            except KeyError:
+                pass
+            try:
+                kwargs['display_name'] = properties['display_name']
+            except KeyError:
+                pass
             mapping[name] = Character(*args, **kwargs)
         return mapping
 
@@ -73,10 +77,13 @@ class ItemMapping(dict[str, Item]):
         for name, properties in raw_struct.items():
             args = (name,)
             kwargs = {}
-            for prop in ['description', 'display_name']:
-                try:
-                    kwargs[prop] = properties[prop]
-                except KeyError:
-                    pass
+            try:
+                kwargs['description'] = Scene(properties['description'])
+            except KeyError:
+                pass
+            try:
+                kwargs['display_name'] = properties['display_name']
+            except KeyError:
+                pass
             item_mapping[name] = Item(*args, **kwargs)
         return item_mapping

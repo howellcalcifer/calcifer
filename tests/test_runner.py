@@ -50,14 +50,12 @@ class TestRunner(TestCase):
         mock_ui_controller_class.assert_called_with(mock_text_parser)
 
     @patch('builtins.input')
-    @patch('calcifer.runner.TextParser', autospec=True)
-    @patch('calcifer.runner.UserVerbDict', autospec=True)
-    @patch('calcifer.runner.CurrentContainerFactory', autospec=True)
+    @patch('calcifer.runner.VerbMapping', autospec=True)
     def test_main_loads_parser_with_verbs(self,
                                           mock_current_container_factory_class,
                                           mock_user_verb_dictionary_class, mock_text_parser_class, _):
         """
-        Running play loads the verb dictionary and container factory into the parser
+        Running play loads the verb mapping into the
         """
         # given
         mock_current_container_factory = mock_current_container_factory_class.return_value

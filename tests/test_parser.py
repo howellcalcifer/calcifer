@@ -1,9 +1,9 @@
 import dataclasses
 from typing import Optional
 from unittest import TestCase
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
-from engine.container_factory import CurrentContainerFactory, CurrentContainerType
+from engine.container_factory import CurrentContainerType
 from world.item import Item, Inventory
 from world.verb import UserAction, Verb, VerbMapping, VerbType, InventoryVerb
 from ui.text.parser import TextParser, InvalidUserActionException
