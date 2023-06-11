@@ -6,7 +6,7 @@ from unittest.mock import patch, Mock, call
 from ui.controllers import OutputControllerCommandLine, InputControllerCommandLine
 from ui.text.parser import TextParser, InvalidUserActionException
 from world.scene import Scene
-from world.verb import UserAction, Verb, VerbType
+from world.verb import UserAction, Verb, VerbType, VerbMapping
 
 
 class TestOutputControllerCommandLine(TestCase):
@@ -75,9 +75,11 @@ class TestInputCommandLineUserAction(TestCase):
                       expected_action=frown_action),
     ]
 
-    def setUp(self) -> None:
-        self.mock_parser = Mock(spec=TextParser)
-        self.controller = InputControllerCommandLine(parser=self.mock_parser)
+    @patch('ui.controllers.TextParser')
+    def setUp(self, mock_text_parser_class) -> None:
+        verbs = {'nod': nod_verb, 'frown': frown_verb}
+        self.controller = InputControllerCommandLine(verbs)
+        self.mock_parser = mock_text_parser_class.return_value
 
     @patch('builtins.input')
     def test_await_user_action_parses_input(self, mock_input):
@@ -96,7 +98,6 @@ class TestInputCommandLineUserAction(TestCase):
     def test_await_user_action(self, _):  # we don't care about the raw input, we care about the parser output
         """Given a series of user inputs, some of which may be invalid,
         the final parsed action is the one that is returned"""
-
         for case in self.cases:
             self.mock_parser.parse_user_action.side_effect = (user_input.parser_output for user_input in case.inputs)
 

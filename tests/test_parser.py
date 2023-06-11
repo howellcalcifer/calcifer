@@ -1,7 +1,7 @@
 import dataclasses
 from typing import Optional
 from unittest import TestCase
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from engine.container_factory import CurrentContainerFactory, CurrentContainerType
 from world.item import Item, Inventory
@@ -32,14 +32,15 @@ entity_dict = {'rock': rock_item}
 
 
 class TestTranslate(TestCase):
-    def setUp(self) -> None:
-        container_factory = Mock(spec=CurrentContainerFactory)
+    @patch('ui.text.parser.CurrentContainerFactory')
+    def setUp(self, container_factory_class) -> None:
+        container_factory = container_factory_class.return_value
         self.inventory = Inventory()
         self.ground = Inventory()
         self.visible = Inventory()
         self.visible.add(Item("rock"))
         container_factory.create.side_effect = self._mock_create_current_container
-        self.parser = TextParser(verbs, container_factory)
+        self.parser = TextParser(verbs)
 
     def _mock_create_current_container(self, typ: CurrentContainerType):
         if typ == CurrentContainerType.VISIBLE:

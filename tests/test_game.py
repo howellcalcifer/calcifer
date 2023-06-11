@@ -20,7 +20,8 @@ class TestGame(TestCase):
         self.calcifer.description = Mock(spec=Scene)
         self.calcifer.location = self.start_location
         self.calcifer.inventory = Mock(spec=Inventory)
-        self.game = Game(self.input_controller, self.calcifer)
+        self.game = Game(self.input_controller)
+        self.game.protagonist = self.calcifer
         self.look_verb = Verb(name="look", type=VerbType.LOOK, description=None, transitive=True, intransitive=True)
         self.nod_verb = Verb(name="nod", type=VerbType.GESTURE, description=None, transitive=True, intransitive=False)
         self.quit_verb = Verb(name="quit", type=VerbType.QUIT, description=None, intransitive=True, transitive=False)

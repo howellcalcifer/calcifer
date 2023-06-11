@@ -15,6 +15,7 @@ class TestCurrentContainers(TestCase):
         self.ground = Inventory()
         self.protagonist = Character('bob', self.inventory)
         self.location = Location('place', inventory=self.ground, description_init=Scene("This is a place"))
+        self.protagonist.location = self.location
         self.container_factory = CurrentContainerFactory()
         self.container_factory.protagonist = self.protagonist
         self.container_factory.location = self.location

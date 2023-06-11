@@ -1,7 +1,8 @@
 import abc
 import textwrap
 
-from world.verb import UserAction
+from world.character import Character
+from world.verb import UserAction, VerbMapping
 from world.scene import Scene
 from ui.text.parser import TextParser, InvalidUserActionException
 
@@ -17,6 +18,10 @@ class InputController(abc.ABC):
     def await_user_action(self) -> UserAction:
         pass
 
+    @abc.abstractmethod
+    def set_protagonist(self, protagonist: Character) -> None:
+        pass
+
 
 class OutputControllerCommandLine(OutputController):
     def show_scene(self, scene: Scene):
@@ -29,14 +34,18 @@ class OutputControllerCommandLine(OutputController):
 
 
 class InputControllerCommandLine(InputController):
-    def __init__(self, parser: TextParser):
-        self.parser = parser
+
+    def __init__(self, verbs: VerbMapping):
+        self._parser = TextParser(verbs)
 
     def await_user_action(self):
         print("What would you like to do?")
         while True:
             try:
-                return self.parser.parse_user_action(input())
+                return self._parser.parse_user_action(input())
             except InvalidUserActionException as e:
                 print(e)
                 continue
+
+    def set_protagonist(self, protagonist) -> None:
+        self._parser.set_protagonist(protagonist)

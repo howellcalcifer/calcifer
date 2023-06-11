@@ -20,16 +20,15 @@ class CurrentContainerType(Enum):
 
 
 class CurrentContainerFactory(ABC):
-    location: Optional[Location]
     protagonist: Optional[Character]
 
     def create(self, typ: CurrentContainerType, _: Optional[Item | Mapping] = None) -> Mapping:
         if typ == CurrentContainerType.LOCATION_ITEMS:
-            return self.location.inventory
+            return self.protagonist.location.inventory
         if typ == CurrentContainerType.PROTAGONIST_ITEMS:
             return self.protagonist.inventory
         if typ == CurrentContainerType.VISIBLE:
-            subcontainers = [self.location.inventory, self.protagonist.inventory]
+            subcontainers = [self.protagonist.location.inventory, self.protagonist.inventory]
             return CurrentContainerCombined(subcontainers)
 
 

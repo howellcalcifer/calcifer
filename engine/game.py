@@ -7,21 +7,21 @@ from world.verb import VerbType
 
 class Game(Subject):
     failure_status: str = ObservedAttribute('failure_status')
+    protagonist: Character = ObservedAttribute('protagonist')
 
-    def __init__(self, ui: InputController, calcifer: Character):
+    def __init__(self, ui: InputController):
         super().__init__()
         self.ui = ui
-        self.calcifer = calcifer
 
     def start(self):
-        self.calcifer.looking_at = self.calcifer
+        self.protagonist.looking_at = self.protagonist
         while True:
             action = self.ui.await_user_action()
             match action.verb.type:
                 case VerbType.LOOK:
-                    self.calcifer.looking_at = self.calcifer.location
+                    self.protagonist.looking_at = self.protagonist.location
                 case VerbType.GESTURE:
-                    self.calcifer.gesture = Gesture(name=action.verb.name,
+                    self.protagonist.gesture = Gesture(name=action.verb.name,
                                                     description=action.verb.description
                                                     if action.verb.description else Scene(f"You {action.verb.name}"))
                 case VerbType.QUIT:
