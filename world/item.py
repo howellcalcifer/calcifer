@@ -43,14 +43,12 @@ class Inventory(MutableMapping[str, Item], Subject):
     def __delitem__(self, key: str) -> None:
         self.item_outgoing = self._items[key]
         self.publish()
-        print(f"Removing item {key}")
         del self._items[key]
         self.item_outgoing = None
 
     def __setitem__(self, key: str, item: Item) -> None:
         self.item_incoming = item
         self.publish()
-        print(f"Adding item {key}")
         self._items[key] = item
         self.item_incoming = None
 

@@ -11,4 +11,6 @@ class InventoryOutputObserver(Observer):
 
     def update(self, inventory: Inventory) -> None:
         if inventory.item_incoming:
-            self.output.show_scene(Scene(f"You take the {inventory.item_incoming.name}"))
+            self.output.show_scene(Scene(f"You take the {inventory.item_incoming.name}."))
+        if inventory.item_outgoing:
+            self.output.show_scene(Scene(f"You drop the {inventory.item_outgoing.name}."))

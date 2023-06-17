@@ -25,6 +25,7 @@ class Game(Subject):
                                                     description=action.verb.description
                                                     if action.verb.description else Scene(f"You {action.verb.name}"))
                 case VerbType.QUIT:
+                    print("Goodbye for now.")
                     break
                 case VerbType.INVENTORY:
                     action.source.remove(action.object)

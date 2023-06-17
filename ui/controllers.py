@@ -29,7 +29,7 @@ class OutputControllerCommandLine(OutputController):
 
     @staticmethod
     def _output(string):
-        lines = ["\n".join(textwrap.wrap(line, 76)) for line in string.split("\n")]
+        lines = ["\n".join(textwrap.wrap(line, 76)) for line in string.strip().split("\n")]
         print("\n".join(lines))
 
 
@@ -39,6 +39,7 @@ class InputControllerCommandLine(InputController):
         self._parser = TextParser(verbs)
 
     def await_user_action(self):
+        print()
         print("What would you like to do?")
         while True:
             try:

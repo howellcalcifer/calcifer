@@ -15,6 +15,8 @@ class UserInputCase:
     expect_invalid: bool
     expected_action: Optional[UserAction] = None
     expect_invalid_message: Optional[str] = None
+    ground: Optional[list[Item]] = None
+    inventory: Optional[list[Item]] = None
 
 
 nod_verb = Verb(name='nod', type=VerbType.GESTURE, description=None, intransitive=True, transitive=False)
@@ -26,7 +28,8 @@ drop_verb = InventoryVerb(name='drop', type=VerbType.INVENTORY, description=None
                           destination=CurrentContainerType.LOCATION_ITEMS)
 look_verb = Verb(name='look', type=VerbType.LOOK, description=None, intransitive=True, transitive=True)
 quit_verb = Verb(name='quit', type=VerbType.QUIT, description=None, intransitive=True, transitive=False)
-verbs = VerbMapping([('nod', nod_verb), ('take', take_verb), ('look', look_verb), ('quit', quit_verb)])
+verbs = VerbMapping(
+    [('drop', drop_verb), ('nod', nod_verb), ('take', take_verb), ('look', look_verb), ('quit', quit_verb)])
 rock_item = Item('rock')
 entity_dict = {'rock': rock_item}
 
@@ -38,7 +41,6 @@ class TestTranslate(TestCase):
         self.inventory = Inventory()
         self.ground = Inventory()
         self.visible = Inventory()
-        self.visible.add(Item("rock"))
         container_factory.create.side_effect = self._mock_create_current_container
         self.parser = TextParser(verbs)
 
@@ -55,8 +57,8 @@ class TestTranslate(TestCase):
                                expected_action=UserAction(verb=nod_verb, object=None)),
                  UserInputCase(user_input="move", expect_invalid=True),
                  UserInputCase(user_input="take", expect_invalid=True),
-                 UserInputCase(user_input="take rock", expect_invalid=False,
-                               expected_action=UserAction(verb=take_verb, object=rock_item, source=self.inventory,
+                 UserInputCase(user_input="drop rock", expect_invalid=False,
+                               expected_action=UserAction(verb=drop_verb, object=rock_item, source=self.inventory,
                                                           destination=self.ground)),
                  UserInputCase(user_input="take rock", expect_invalid=False,
                                expected_action=UserAction(verb=take_verb, object=rock_item, source=self.ground,
