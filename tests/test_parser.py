@@ -1,7 +1,6 @@
 import dataclasses
 from typing import Optional
 from unittest import TestCase
-from unittest.mock import patch
 
 from engine.container_factory import CurrentContainerType
 from world.item import Item, Inventory
