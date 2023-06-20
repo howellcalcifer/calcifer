@@ -33,22 +33,11 @@ entity_dict = {'rock': rock_item}
 
 
 class TestTranslate(TestCase):
-    @patch('ui.text.parser.CurrentContainerFactory')
-    def setUp(self, container_factory_class) -> None:
-        container_factory = container_factory_class.return_value
+    def setUp(self) -> None:
         self.inventory = Inventory()
         self.ground = Inventory()
         self.visible = Inventory()
-        container_factory.create.side_effect = self._mock_create_current_container
         self.parser = TextParser(verbs)
-
-    def _mock_create_current_container(self, typ: CurrentContainerType):
-        if typ == CurrentContainerType.VISIBLE:
-            return self.visible
-        if typ == CurrentContainerType.LOCATION_ITEMS:
-            return self.ground
-        if typ == CurrentContainerType.PROTAGONIST_ITEMS:
-            return self.inventory
 
     def test_translate_user_action(self):
         cases = [UserInputCase(user_input="nod", expect_invalid=False,
