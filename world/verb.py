@@ -9,7 +9,7 @@ from yaml import load, Loader
 
 from engine.container_factory import CurrentContainerType
 from world.character import Character
-from world.item import Item, Inventory
+from world.item import Item
 from world.scene import Scene
 
 
@@ -58,8 +58,6 @@ class InventoryVerb(Verb):
 class UserAction:
     verb: Verb
     object: Optional[Item | Character] = None
-    source: Optional[Inventory] = None
-    destination: Optional[Inventory] = None
 
     def __hash__(self):
         return hash((self.verb, self.object))

@@ -1,25 +1,32 @@
-from engine.container_factory import CurrentContainerFactory, CurrentContainerType
-from world.character import Character
-from world.verb import UserAction, VerbMapping, VerbType
+import dataclasses
+from typing import Optional
+
+from world.verb import VerbMapping, Verb
 
 
 class InvalidUserActionException(Exception):
     pass
 
 
+@dataclasses.dataclass
+class ParsedResult:
+    verb: Verb
+    object_ref_1: Optional[str] = None
+    object_ref_2: Optional[str] = None
+
+
 class TextParser:
     def __init__(self, verbs: VerbMapping):
         self.verbs = verbs
         # TODO: move this up to controller, with all its logic
-        self._container_factory = CurrentContainerFactory()
 
-    def parse_user_action(self, text: str) -> UserAction:
+    def parse_user_action(self, text: str) -> ParsedResult:
         words = text.split()
         verb = self.parse_verb(words)
         obj = self.parse_object(words, verb)
-        destination, source = self.parse_inventory_move(verb, obj)
-        return UserAction(verb=verb, object=obj, source=source, destination=destination)
+        return ParsedResult(verb=verb, object_ref_1=obj)
 
+    """
     def parse_inventory_move(self, verb, obj):
         if verb.type == VerbType.INVENTORY:
             source = self._container_factory.create(verb.source)
@@ -30,14 +37,14 @@ class TextParser:
             source = None
             destination = None
         return destination, source
+    """
 
-    def parse_object(self, words, verb):
+    @staticmethod
+    def parse_object(words, verb):
         try:
-            obj = self._container_factory.create(CurrentContainerType.VISIBLE)[words[1]]
+            obj = words[1]
             if not verb.transitive:
                 raise InvalidUserActionException(f"You can't {verb.name} the {obj}")
-        except KeyError:
-            raise InvalidUserActionException(f"I can't see {words[1]}") from None
         except IndexError:
             if not verb.intransitive:
                 raise InvalidUserActionException(f"You need to {verb.name} something") from None
@@ -53,7 +60,3 @@ class TextParser:
             raise InvalidUserActionException("Don't give me the silent treatment") from None
         return verb
 
-    # TODO: move this up to controller
-    def set_protagonist(self, protagonist: Character):
-
-        self._container_factory.protagonist = protagonist

@@ -5,18 +5,16 @@ from unittest.mock import patch
 
 from engine.container_factory import CurrentContainerType
 from world.item import Item, Inventory
-from world.verb import UserAction, Verb, VerbMapping, VerbType, InventoryVerb
-from ui.text.parser import TextParser, InvalidUserActionException
+from world.verb import Verb, VerbMapping, VerbType, InventoryVerb
+from ui.text.parser import TextParser, InvalidUserActionException, ParsedResult
 
 
 @dataclasses.dataclass
 class UserInputCase:
     user_input: str
     expect_invalid: bool
-    expected_action: Optional[UserAction] = None
+    expected_result: Optional[ParsedResult] = None
     expect_invalid_message: Optional[str] = None
-    ground: Optional[list[Item]] = None
-    inventory: Optional[list[Item]] = None
 
 
 nod_verb = Verb(name='nod', type=VerbType.GESTURE, description=None, intransitive=True, transitive=False)
@@ -54,19 +52,17 @@ class TestTranslate(TestCase):
 
     def test_translate_user_action(self):
         cases = [UserInputCase(user_input="nod", expect_invalid=False,
-                               expected_action=UserAction(verb=nod_verb, object=None)),
+                               expected_result=ParsedResult(verb=nod_verb)),
                  UserInputCase(user_input="move", expect_invalid=True),
                  UserInputCase(user_input="take", expect_invalid=True),
                  UserInputCase(user_input="drop rock", expect_invalid=False,
-                               expected_action=UserAction(verb=drop_verb, object=rock_item, source=self.inventory,
-                                                          destination=self.ground)),
+                               expected_result=ParsedResult(verb=drop_verb, object_ref_1="rock")),
                  UserInputCase(user_input="take rock", expect_invalid=False,
-                               expected_action=UserAction(verb=take_verb, object=rock_item, source=self.ground,
-                                                          destination=self.inventory)),
+                               expected_result=ParsedResult(verb=take_verb, object_ref_1="rock")),
                  UserInputCase(user_input="look rock", expect_invalid=False,
-                               expected_action=UserAction(verb=look_verb, object=rock_item)),
+                               expected_result=ParsedResult(verb=look_verb, object_ref_1="rock")),
                  UserInputCase(user_input="look", expect_invalid=False,
-                               expected_action=UserAction(verb=look_verb)),
+                               expected_result=ParsedResult(verb=look_verb)),
                  UserInputCase(user_input="quit rock", expect_invalid=True)]
         self.parser.visible_entities = entity_dict
         for case in cases:
@@ -75,5 +71,5 @@ class TestTranslate(TestCase):
                 with self.assertRaises(InvalidUserActionException, msg=test_case_message):
                     self.parser.parse_user_action(case.user_input)
             else:
-                actual_action = self.parser.parse_user_action(case.user_input)
-                self.assertEqual(case.expected_action, actual_action, msg=test_case_message)
+                actual_result = self.parser.parse_user_action(case.user_input)
+                self.assertEqual(case.expected_result, actual_result, msg=test_case_message)

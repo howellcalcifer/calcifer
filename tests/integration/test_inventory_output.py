@@ -19,5 +19,5 @@ class TestInventoryOutput(TestCase):
     def test_take_rock(self):
         self.inventory.add(self.rock)
         self.assertEqual(self.output_controller.show_scene.call_count, 1)
-        take_rock_scene = Scene("You take the rock")
+        take_rock_scene = Scene("You take the rock.")
         self.output_controller.show_scene.assert_called_with(take_rock_scene)

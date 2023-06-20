@@ -1,3 +1,4 @@
+from engine.container_factory import CurrentContainerFactory
 from pattern.observer import Subject, ObservedAttribute
 from ui.controllers import InputController
 from world.character import Character, Gesture
@@ -8,10 +9,11 @@ from world.verb import VerbType
 class Game(Subject):
     failure_status: str = ObservedAttribute('failure_status')
 
-    def __init__(self, ui: InputController):
+    def __init__(self, input: InputController):
         super().__init__()
-        self._input = ui
+        self._input = input
         self._protagonist: Character | None = None
+        self._current_containers = CurrentContainerFactory()
 
     def start(self):
         self.protagonist.looking_at = self.protagonist
@@ -28,8 +30,10 @@ class Game(Subject):
                     print("Goodbye for now.")
                     break
                 case VerbType.INVENTORY:
-                    action.source.remove(action.object)
-                    action.destination.add(action.object)
+                    source = self._current_containers.create(action.verb.source)
+                    destination = self._current_containers.create(action.verb.destination)
+                    source.remove(action.object)
+                    destination.add(action.object)
                 case _:
                     self.failure_status = "I don't understand what you mean."
 
@@ -41,6 +45,7 @@ class Game(Subject):
     def protagonist(self, protagonist: Character):
         self._protagonist = protagonist
         self._input.set_protagonist(protagonist)
+        self._current_containers.protagonist = protagonist
 
 
 

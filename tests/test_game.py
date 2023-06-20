@@ -1,13 +1,14 @@
 from unittest import TestCase
 from unittest.mock import Mock
 
+from engine.container_factory import CurrentContainerType
 from engine.game import Game
 from ui.controllers import InputController
 from world.character import Character
 from world.item import Item, Inventory
 from world.location import Location
 from world.scene import Scene
-from world.verb import UserAction, Verb, VerbType
+from world.verb import UserAction, Verb, VerbType, InventoryVerb
 
 
 class TestGame(TestCase):
@@ -25,10 +26,12 @@ class TestGame(TestCase):
         self.look_verb = Verb(name="look", type=VerbType.LOOK, description=None, transitive=True, intransitive=True)
         self.nod_verb = Verb(name="nod", type=VerbType.GESTURE, description=None, transitive=True, intransitive=False)
         self.quit_verb = Verb(name="quit", type=VerbType.QUIT, description=None, intransitive=True, transitive=False)
-        self.take_verb = Verb(name="take", type=VerbType.INVENTORY, description=None, intransitive=False,
-                              transitive=False, )
-        self.drop_verb = Verb(name="drop", type=VerbType.INVENTORY, description=None, intransitive=False,
-                              transitive=False)
+        self.take_verb = InventoryVerb(name="take", type=VerbType.INVENTORY, description=None, intransitive=False,
+                                       transitive=False, source=CurrentContainerType.LOCATION_ITEMS,
+                                       destination=CurrentContainerType.PROTAGONIST_ITEMS)
+        self.drop_verb = InventoryVerb(name="drop", type=VerbType.INVENTORY, description=None, intransitive=False,
+                                       transitive=False, source=CurrentContainerType.PROTAGONIST_ITEMS,
+                                       destination=CurrentContainerType.LOCATION_ITEMS)
         self.bob_verb = Verb(name="bob", type=VerbType.GESTURE, description=Scene("You bob around a bit"),
                              transitive=False, intransitive=True)
         self.rock_item = Item(name="rock")
@@ -92,8 +95,7 @@ class TestGame(TestCase):
         """ when the user gives a take rock command, the rock is added to Calcifer's inventory
         and removed from the location"""
         self.input_controller.await_user_action.side_effect = [
-            UserAction(self.take_verb, self.rock_item, source=self.calcifer.location.inventory,
-                       destination=self.calcifer.inventory),
+            UserAction(self.take_verb, self.rock_item),
             UserAction(self.quit_verb, None)]
         self.game.start()
         # then
@@ -104,8 +106,7 @@ class TestGame(TestCase):
         """ when the user gives a drop rock command, the rock is removed from Calcifer's inventory
         and added to the location"""
         self.input_controller.await_user_action.side_effect = [
-            UserAction(self.drop_verb, self.rock_item, source=self.calcifer.inventory,
-                       destination=self.calcifer.location.inventory),
+            UserAction(self.drop_verb, self.rock_item),
             UserAction(self.quit_verb, None)]
         self.game.start()
         # then
