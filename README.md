@@ -10,14 +10,19 @@
 
 ### Prerequisites
 
-`pip install --user pipenv`
-`pipenv install`
+```
+pip install --user pipenv
+pipenv install --dev
+```
 
 ### Run tests
 
 `pipenv run pytest`
 
-and to generate a coverage report:
+To generate an HTML coverage report:
 
 `pipenv run pytest --cov --cov-report html:coverage_report`
 
+To update snapshot files:
+
+`pipenv run pytest --update-snapshots`
