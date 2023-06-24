@@ -1,4 +1,3 @@
-from engine.container_factory import CurrentContainerFactory
 from pattern.observer import Subject, ObservedAttribute
 from world.character import Character
 
