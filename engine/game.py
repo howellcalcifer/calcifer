@@ -6,7 +6,7 @@ from world.scene import Scene
 from world.verb import VerbType
 
 
-class Game(Subject):
+class Game:
     failure_status: str = ObservedAttribute('failure_status')
 
     def __init__(self, input: InputController):
