@@ -1,23 +1,13 @@
 from engine.container_factory import CurrentContainerFactory
-from pattern.observer import ObservedAttribute
+from pattern.observer import Subject, ObservedAttribute
 from world.character import Character
 
 
-class Game:
-    failure_status: str = ObservedAttribute('failure_status')
+class Game(Subject):
+    protagonist = ObservedAttribute('protagonist')
+    running = ObservedAttribute('running')
 
     def __init__(self):
         super().__init__()
-        self._protagonist: Character | None = None
-        self._current_containers = CurrentContainerFactory()
-        self.running = True
-
-    @property
-    def protagonist(self):
-        return self._protagonist
-
-    @protagonist.setter
-    def protagonist(self, protagonist: Character):
-        self._protagonist = protagonist
-        self._current_containers.protagonist = protagonist
-
+        self.protagonist: Character | None = None
+        self.running: bool = True
