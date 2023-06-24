@@ -36,8 +36,16 @@ class InputController(Subject, abc.ABC):
         pass
 
 
+class OutputException(Exception):
+    pass
+
+
 class OutputControllerCommandLine(OutputController):
     def show_scene(self, scene: Scene):
+        if scene is None:
+            raise OutputException("Trying to show a non-existent scene")
+        if scene.text is None:
+            raise OutputException("Trying to show a scene without any text")
         self._output(scene.text)
 
     @staticmethod

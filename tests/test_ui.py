@@ -5,7 +5,7 @@ from unittest.mock import patch, Mock, call
 
 from engine.container_factory import CurrentContainerType
 from engine.game import Game
-from ui.controllers import OutputControllerCommandLine, InputControllerCommandLine
+from ui.controllers import OutputControllerCommandLine, InputControllerCommandLine, OutputException
 from ui.text.parser import InvalidUserActionException, ParsedResult
 from world.item import Inventory, Item
 from world.scene import Scene
@@ -40,6 +40,12 @@ class TestOutputControllerCommandLine(TestCase):
 
         self.ui.show_scene(mock_scene)
         mocked_print.assert_called_with(expected_output)
+
+    def test_show_no_scene_throws(self):
+        self.assertRaises(OutputException, self.ui.show_scene, None)
+
+    def test_show_scene_without_text_throws(self):
+        self.assertRaises(OutputException, self.ui.show_scene, Scene(None))
 
     @patch('builtins.print')
     def test_show_scene_preserves_newline(self, mocked_print):

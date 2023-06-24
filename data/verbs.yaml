@@ -5,7 +5,7 @@ smile:
   intransitive: true
 bow:
   type: gesture
-  description: You bow gracefully
+  description: You bow gracefully.
   intransitive: true
 grimace:
   type: gesture

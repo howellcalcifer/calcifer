@@ -2,6 +2,7 @@ from engine.container_factory import CurrentContainerFactory
 from engine.game import Game
 from pattern.observer import Observer
 from ui.controllers import InputController
+from world.character import Gesture
 from world.scene import Scene
 from world.verb import VerbType
 
@@ -26,7 +27,7 @@ class InputGameObserver(Observer):
         if action.verb.type == VerbType.LOOK:
             self._game.protagonist.looking_at = action.object if action.object else self._game.protagonist.location
         if action.verb.type == VerbType.GESTURE:
-            self._game.protagonist.gesture = Scene(f"You {action.verb.name}.")
-
-
-
+            self._game.protagonist.gesture = Gesture(name=action.verb.name,
+                                                     description=(
+                                                         action.verb.description if action.verb.description else
+                                                         Scene(f"You {action.verb.name}.")))

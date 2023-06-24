@@ -100,7 +100,7 @@ class VerbMapping(dict[str, Verb]):
 
         for verb, properties in raw_struct.items():
             verb_args = (verb, VerbType(properties["type"]),
-                         Scene(properties["description"] if "description" in properties else None),
+                         Scene(properties["description"]) if "description" in properties else None,
                          properties[
                              "transitive"] if "transitive" in properties else None,
                          properties[

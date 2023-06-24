@@ -6,7 +6,7 @@ from engine.game import Game
 from engine.game_output_observer import GameOutputObserver
 from engine.input_game_observer import InputGameObserver
 from ui.controllers import InputController, OutputController
-from world.character import Character
+from world.character import Character, Gesture
 from world.item import Inventory, Item
 from world.location import Location
 from world.scene import Scene
@@ -59,6 +59,7 @@ class TestInputGameObserver(TestCase):
         self.calcifer.inventory = Mock(spec=Inventory)
         self.look_verb = Verb(name="look", type=VerbType.LOOK, description=None, transitive=True, intransitive=True)
         self.nod_verb = Verb(name="nod", type=VerbType.GESTURE, description=None, transitive=True, intransitive=False)
+        self.bow_verb = Verb(name="bow", type=VerbType.GESTURE, description=Scene("You bow gracefully."), transitive=True, intransitive=False)
         self.quit_verb = Verb(name="quit", type=VerbType.QUIT, description=None, intransitive=True, transitive=False)
         self.take_verb = InventoryVerb(name="take", type=VerbType.INVENTORY, description=None, intransitive=False,
                                        transitive=False, source=CurrentContainerType.LOCATION_ITEMS,
@@ -109,7 +110,12 @@ class TestInputGameObserver(TestCase):
     def test_nods_on_nod_action(self):
         self.controller.action = UserAction(self.nod_verb)
         self.observer.update(self.controller)
-        self.assertEqual(self.game.protagonist.gesture, Scene("You nod."))
+        self.assertEqual(self.game.protagonist.gesture, Gesture(name="nod", description=Scene("You nod.")))
+
+    def test_bow_on_nod_action(self):
+        self.controller.action = UserAction(self.bow_verb)
+        self.observer.update(self.controller)
+        self.assertEqual(self.game.protagonist.gesture, Gesture(name="bow", description=Scene("You bow gracefully.")))
 
 
 class TestGameOutputObserver(TestCase):

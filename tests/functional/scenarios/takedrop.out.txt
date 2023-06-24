@@ -1,7 +1,16 @@
 You take the rock.
 
 What would you like to do?
+You smile.
+
+What would you like to do?
 You drop the rock.
+
+What would you like to do?
+You grimace.
+
+What would you like to do?
+You bow gracefully.
 
 What would you like to do?
 Goodbye for now.

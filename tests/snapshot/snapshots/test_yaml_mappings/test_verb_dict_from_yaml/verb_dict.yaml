@@ -1,8 +1,7 @@
 !!python/object/new:world.mappings.VerbMapping
 dictitems:
   abracadabra: !!python/object:world.verb.Verb
-    description: !!python/object:world.scene.Scene
-      text: null
+    description: null
     intransitive: true
     name: abracadabra
     transitive: false
@@ -11,7 +10,7 @@ dictitems:
     - MAGIC
   bow: !!python/object:world.verb.Verb
     description: !!python/object:world.scene.Scene
-      text: You bow gracefully
+      text: You bow gracefully.
     intransitive: true
     name: bow
     transitive: false
@@ -19,8 +18,7 @@ dictitems:
     - *id001
     - GESTURE
   drop: !!python/object:world.verb.InventoryVerb
-    description: !!python/object:world.scene.Scene
-      text: null
+    description: null
     destination: &id005 !!python/object/apply:builtins.getattr
     - &id002 !!python/name:engine.container_factory.CurrentContainerType ''
     - LOCATION_ITEMS
@@ -34,8 +32,7 @@ dictitems:
     - *id001
     - INVENTORY
   east: !!python/object:world.verb.Verb
-    description: !!python/object:world.scene.Scene
-      text: null
+    description: null
     intransitive: false
     name: east
     transitive: true
@@ -43,8 +40,7 @@ dictitems:
     - *id001
     - MOVE
   sit: !!python/object:world.verb.Verb
-    description: !!python/object:world.scene.Scene
-      text: null
+    description: null
     intransitive: true
     name: sit
     transitive: false
@@ -52,15 +48,13 @@ dictitems:
     - *id001
     - POSTURE
   smile: !!python/object:world.verb.Verb
-    description: !!python/object:world.scene.Scene
-      text: null
+    description: null
     intransitive: true
     name: smile
     transitive: false
     type: *id003
   take: !!python/object:world.verb.InventoryVerb
-    description: !!python/object:world.scene.Scene
-      text: null
+    description: null
     destination: *id004
     intransitive: false
     name: take
