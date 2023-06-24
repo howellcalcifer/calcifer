@@ -1,6 +1,6 @@
 from engine.container_factory import CurrentContainerFactory
 from engine.game import Game
-from pattern.observer import Observer, Subject
+from pattern.observer import Observer
 from ui.controllers import InputController
 from world.scene import Scene
 from world.verb import VerbType

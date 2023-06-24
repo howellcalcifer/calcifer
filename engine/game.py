@@ -1,5 +1,5 @@
 from engine.container_factory import CurrentContainerFactory
-from pattern.observer import Subject, ObservedAttribute
+from pattern.observer import ObservedAttribute
 from ui.controllers import InputController
 from world.character import Character, Gesture
 from world.scene import Scene
