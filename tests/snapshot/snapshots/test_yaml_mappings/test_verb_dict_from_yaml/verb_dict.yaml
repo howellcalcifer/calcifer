@@ -1,4 +1,4 @@
-!!python/object/new:world.verb.VerbMapping
+!!python/object/new:world.mappings.VerbMapping
 dictitems:
   abracadabra: !!python/object:world.verb.Verb
     description: !!python/object:world.scene.Scene

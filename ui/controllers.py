@@ -3,7 +3,8 @@ import textwrap
 
 from engine.container_factory import CurrentContainerFactory, CurrentContainerType
 from world.character import Character
-from world.verb import UserAction, VerbMapping, VerbType
+from world.verb import UserAction, VerbType
+from world.mappings import VerbMapping
 from world.scene import Scene
 from ui.text.parser import TextParser, InvalidUserActionException
 

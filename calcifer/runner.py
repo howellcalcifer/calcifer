@@ -3,8 +3,7 @@ from engine.game import Game
 from engine.inventory_output_observer import InventoryOutputObserver
 from engine.protagonist_output_observer import ProtagonistOutputObserver
 from ui.controllers import OutputControllerCommandLine, InputControllerCommandLine
-from world.mappings import ItemMapping, CharacterMapping, LocationMapping
-from world.verb import VerbMapping
+from world.mappings import ItemMapping, CharacterMapping, LocationMapping, VerbMapping
 
 
 def main():

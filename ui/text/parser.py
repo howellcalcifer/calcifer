@@ -1,7 +1,8 @@
 import dataclasses
 from typing import Optional
 
-from world.verb import VerbMapping, Verb
+from world.verb import Verb
+from world.mappings import VerbMapping
 
 
 class InvalidUserActionException(Exception):

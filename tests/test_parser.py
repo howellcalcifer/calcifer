@@ -4,7 +4,8 @@ from unittest import TestCase
 
 from engine.container_factory import CurrentContainerType
 from world.item import Item, Inventory
-from world.verb import Verb, VerbMapping, VerbType, InventoryVerb
+from world.verb import Verb, VerbType, InventoryVerb
+from world.mappings import VerbMapping
 from ui.text.parser import TextParser, InvalidUserActionException, ParsedResult
 
 

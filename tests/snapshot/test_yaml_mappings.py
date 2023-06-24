@@ -1,7 +1,6 @@
 import yaml
 
-from world.mappings import LocationMapping, CharacterMapping, ItemMapping
-from world.verb import VerbMapping
+from world.mappings import LocationMapping, CharacterMapping, ItemMapping, VerbMapping
 
 
 def test_verb_dict_from_yaml(snapshot):

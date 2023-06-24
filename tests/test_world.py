@@ -7,7 +7,8 @@ from world.character import Describable, Character, Gesture
 from world.item import Item, Inventory
 from world.location import Location
 from world.scene import Scene
-from world.verb import Verb, VerbMapping
+from world.verb import Verb
+from world.mappings import VerbMapping
 
 
 @dataclasses.dataclass
