@@ -23,6 +23,10 @@ class InputController(Subject, abc.ABC):
         pass
 
     @abc.abstractmethod
+    def start(self) -> None:
+        pass
+
+    @abc.abstractmethod
     def set_protagonist(self, protagonist: Character) -> None:
         pass
 
@@ -85,3 +89,7 @@ class InputControllerCommandLine(InputController):
 
     def set_protagonist(self, protagonist) -> None:
         self._container_factory.protagonist = protagonist
+
+    def start(self):
+        while self._game.running:
+            self.await_user_action()

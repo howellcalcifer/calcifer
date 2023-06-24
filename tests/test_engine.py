@@ -3,8 +3,9 @@ from unittest.mock import Mock
 
 from engine.container_factory import CurrentContainerFactory, CurrentContainerType
 from engine.game import Game
+from engine.game_output_observer import GameOutputObserver
 from engine.input_game_observer import InputGameObserver
-from ui.controllers import InputController
+from ui.controllers import InputController, OutputController
 from world.character import Character
 from world.item import Inventory, Item
 from world.location import Location
@@ -109,3 +110,25 @@ class TestInputGameObserver(TestCase):
         self.controller.action = UserAction(self.nod_verb)
         self.observer.update(self.controller)
         self.assertEqual(self.game.protagonist.gesture, Scene("You nod."))
+
+
+class TestGameOutputObserver(TestCase):
+
+    def setUp(self) -> None:
+        self.game = Mock(Game)
+        self.output = Mock(OutputController)
+        self.observer = GameOutputObserver(self.output)
+
+    def test_shows_quit_scene_when_stop_running(self):
+        self.game.running = False
+        self.game.changed_observed_attribute = 'running'
+        self.observer.update(self.game)
+        self.output.show_scene.assert_called_with(Scene("Goodbye for now."))
+
+    def test_shows_protagonist_when_start_running(self):
+        self.game.running = True
+        self.game.changed_observed_attribute = 'running'
+        self.game.protagonist = Mock(Character)
+        self.game.protagonist.description = Scene("You seem nice.")
+        self.observer.update(self.game)
+        self.output.show_scene.assert_called_with(Scene("You seem nice."))

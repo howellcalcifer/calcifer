@@ -10,4 +10,3 @@ class Game(Subject):
     def __init__(self):
         super().__init__()
         self.protagonist: Character | None = None
-        self.running: bool = True
