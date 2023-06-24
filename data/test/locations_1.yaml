@@ -1,4 +1,10 @@
-start:
+library:
   description: "A library in a castle."
   inventory:
     - rock
+  characters:
+    - calcifer
+pub:
+  description: "A place that serves beer."
+  characters:
+    - howell

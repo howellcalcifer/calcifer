@@ -7,3 +7,6 @@ calcifer:
   inventory:
     - sock
     - lock
+howell:
+  inventory:
+    - beer

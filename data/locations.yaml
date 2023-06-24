@@ -1,4 +1,6 @@
-start:
+library:
   description: "A library in a castle."
   inventory:
     - rock
+  characters:
+    - calcifer

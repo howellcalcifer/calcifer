@@ -15,7 +15,7 @@ from world.verb import Verb, VerbType
 class LocationMapping(dict[str, Location]):
 
     @classmethod
-    def from_yaml(cls, package: str, resource: str, items: ItemMapping, _: CharacterMapping) -> LocationMapping:
+    def from_yaml(cls, package: str, resource: str, items: ItemMapping, characters: CharacterMapping) -> LocationMapping:
         with (files(package) / resource).open('r') as text_io:
             raw_struct = load(text_io, Loader)
         mapping = cls()
@@ -28,6 +28,7 @@ class LocationMapping(dict[str, Location]):
             except KeyError:
                 pass
             mapping[name] = Location(*args, **kwargs)
+            cls.set_character_locations(properties, characters, mapping[name])
         return mapping
 
     @staticmethod
@@ -37,6 +38,12 @@ class LocationMapping(dict[str, Location]):
             for item_name in yaml_character['inventory']:
                 inventory.add(items[item_name])
         return inventory
+
+    @staticmethod
+    def set_character_locations(yaml_location, characters, location):
+        if 'characters' in yaml_location:
+            for char_name in yaml_location['characters']:
+                characters[char_name].location = location
 
 
 class CharacterMapping(dict[str, Character]):

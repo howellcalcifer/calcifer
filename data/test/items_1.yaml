@@ -4,3 +4,5 @@ sock:
   description: "A knitted, striped sock."
 lock:
   display_name: "lock of hair"
+beer:
+  description: "A pint of beer."

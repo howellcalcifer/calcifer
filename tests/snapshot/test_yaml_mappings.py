@@ -24,3 +24,5 @@ def test_location_mapping_from_yaml(snapshot):
     character_mapping = CharacterMapping.from_yaml("data.test", "characters_1.yaml", item_mapping)
     location_mapping = LocationMapping.from_yaml("data.test", "locations_1.yaml", item_mapping, character_mapping)
     snapshot.assert_match(yaml.dump(location_mapping), 'location_mapping.yaml')
+    snapshot.assert_match(yaml.dump(item_mapping), 'item_mapping.yaml')
+    snapshot.assert_match(yaml.dump(character_mapping), 'character_mapping.yaml')

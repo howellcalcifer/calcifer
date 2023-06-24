@@ -13,8 +13,7 @@ def main():
 
     items = ItemMapping.from_yaml("data", "items.yaml")
     characters = CharacterMapping.from_yaml("data", "characters.yaml", items)
-    locations = LocationMapping.from_yaml("data", "locations.yaml", items, characters)
-    start_location_name = 'start'
+    LocationMapping.from_yaml("data", "locations.yaml", items, characters)
     protagonist_name = 'calcifer'
     protagonist = characters[protagonist_name]
     game = Game()
@@ -31,7 +30,6 @@ def main():
     input_observer = InputGameObserver(game)
     input_controller.subscribe(input_observer)
 
-    protagonist.location = locations[start_location_name]
     game.protagonist = protagonist
     game.running = True
     input_controller.start()
