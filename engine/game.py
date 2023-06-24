@@ -14,6 +14,7 @@ class Game:
         self._input = input
         self._protagonist: Character | None = None
         self._current_containers = CurrentContainerFactory()
+        self._running = False
 
     def start(self):
         self.protagonist.looking_at = self.protagonist
@@ -24,8 +25,8 @@ class Game:
                     self.protagonist.looking_at = self.protagonist.location
                 case VerbType.GESTURE:
                     self.protagonist.gesture = Gesture(name=action.verb.name,
-                                                    description=action.verb.description
-                                                    if action.verb.description else Scene(f"You {action.verb.name}"))
+                                                       description=action.verb.description
+                                                       if action.verb.description else Scene(f"You {action.verb.name}"))
                 case VerbType.QUIT:
                     print("Goodbye for now.")
                     break
@@ -46,6 +47,4 @@ class Game:
         self._protagonist = protagonist
         self._input.set_protagonist(protagonist)
         self._current_containers.protagonist = protagonist
-
-
 

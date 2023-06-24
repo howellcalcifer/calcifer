@@ -24,6 +24,11 @@ class InputController(abc.ABC):
     def set_protagonist(self, protagonist: Character) -> None:
         pass
 
+    @property
+    @abc.abstractmethod
+    def action(self) -> UserAction:
+        pass
+
 
 class OutputControllerCommandLine(OutputController):
     def show_scene(self, scene: Scene):
@@ -36,6 +41,10 @@ class OutputControllerCommandLine(OutputController):
 
 
 class InputControllerCommandLine(InputController):
+
+    @property
+    def action(self):
+        return None
 
     def __init__(self, verbs: VerbMapping):
         self._parser = TextParser(verbs)
