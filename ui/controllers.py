@@ -1,7 +1,7 @@
 import abc
 import textwrap
 
-from engine.container_factory import CurrentContainerFactory, CurrentContainerType
+from engine.container_factory import CurrentContainerType
 from engine.game import Game
 from pattern.observer import Subject, ObservedAttribute
 from ui.text.parser import TextParser, InvalidUserActionException
@@ -55,7 +55,6 @@ class InputControllerCommandLine(InputController):
     def __init__(self, verbs: VerbMapping, game: Game):
         super().__init__()
         self._parser = TextParser(verbs)
-        self._container_factory = CurrentContainerFactory()
         self._game = game
         self._action = None
 
@@ -64,7 +63,6 @@ class InputControllerCommandLine(InputController):
     def await_user_action(self):
         print()
         print("What would you like to do?")
-        self._container_factory.protagonist = self._game.protagonist
         while True:
             try:
                 parsed = self._parser.parse_user_action(input())
@@ -76,15 +74,15 @@ class InputControllerCommandLine(InputController):
                 self.action = UserAction(verb=parsed.verb)
                 return
 
-            visible_objects = self._container_factory.create(CurrentContainerType.VISIBLE)
+            visible_objects = self._game.container(CurrentContainerType.VISIBLE)
             try:
                 obj = visible_objects[parsed.object_ref_1]
             except KeyError:
                 print(f"You can't see any {parsed.object_ref_1}")
                 continue
             if parsed.verb.type == VerbType.INVENTORY:
-                source = self._container_factory.create(parsed.verb.source)
-                destination = self._container_factory.create(parsed.verb.destination)
+                source = self._game.container(parsed.verb.source)
+                destination = self._game.container(parsed.verb.destination)
                 if obj.name not in source or obj.name in destination:
                     print(f"You can't {parsed.verb.name} the {obj}")
                     continue

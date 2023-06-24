@@ -1,4 +1,3 @@
-from engine.container_factory import CurrentContainerFactory
 from engine.game import Game
 from pattern.observer import Observer
 from ui.controllers import InputController
@@ -11,17 +10,14 @@ class InputGameObserver(Observer):
 
     def __init__(self, game: Game):
         self._game = game
-        self._container_factory = CurrentContainerFactory()
-        self._container_factory.protagonist = self._game.protagonist
 
     def update(self, controller: InputController) -> None:
         action = controller.action
         if action.verb.type == VerbType.QUIT:
             self._game.running = False
         if action.verb.type == VerbType.INVENTORY:
-            self._container_factory.protagonist = self._game.protagonist
-            source = self._container_factory.create(action.verb.source)
-            destination = self._container_factory.create(action.verb.destination)
+            source = self._game.container(action.verb.source)
+            destination = self._game.container(action.verb.destination)
             source.remove(action.object)
             destination.add(action.object)
         if action.verb.type == VerbType.LOOK:

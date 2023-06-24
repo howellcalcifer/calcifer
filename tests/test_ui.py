@@ -101,17 +101,15 @@ class TestInputCommandLineUserAction(TestCase):
     ]
 
     @patch('ui.controllers.TextParser')
-    @patch('ui.controllers.CurrentContainerFactory')
-    def setUp(self, mock_container_factory_class, mock_text_parser_class) -> None:
+    def setUp(self, mock_text_parser_class) -> None:
         verbs = {'nod': nod_verb, 'frown': frown_verb, 'take': take_verb}
         self.game = Mock(Game)
         self.controller = InputControllerCommandLine(verbs, self.game)
         self.mock_parser = mock_text_parser_class.return_value
-        container_factory = mock_container_factory_class.return_value
         self.inventory = Inventory()
         self.ground = Inventory()
         self.visible = Inventory()
-        container_factory.create.side_effect = self._mock_create_current_container
+        self.game.container.side_effect = self._mock_create_current_container
 
     def _mock_create_current_container(self, typ: CurrentContainerType):
         if typ == CurrentContainerType.VISIBLE:

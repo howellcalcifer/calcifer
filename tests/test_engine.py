@@ -59,7 +59,8 @@ class TestInputGameObserver(TestCase):
         self.calcifer.inventory = Mock(spec=Inventory)
         self.look_verb = Verb(name="look", type=VerbType.LOOK, description=None, transitive=True, intransitive=True)
         self.nod_verb = Verb(name="nod", type=VerbType.GESTURE, description=None, transitive=True, intransitive=False)
-        self.bow_verb = Verb(name="bow", type=VerbType.GESTURE, description=Scene("You bow gracefully."), transitive=True, intransitive=False)
+        self.bow_verb = Verb(name="bow", type=VerbType.GESTURE, description=Scene("You bow gracefully."),
+                             transitive=True, intransitive=False)
         self.quit_verb = Verb(name="quit", type=VerbType.QUIT, description=None, intransitive=True, transitive=False)
         self.take_verb = InventoryVerb(name="take", type=VerbType.INVENTORY, description=None, intransitive=False,
                                        transitive=False, source=CurrentContainerType.LOCATION_ITEMS,
@@ -73,8 +74,15 @@ class TestInputGameObserver(TestCase):
         self.game = Mock(Game)
         self.game.protagonist = self.calcifer
         self.game.running = True
+        self.game.container.side_effect = self._mock_container
         self.controller = Mock(InputController)
         self.observer = InputGameObserver(self.game)
+
+    def _mock_container(self, typ: CurrentContainerType):
+        if typ == CurrentContainerType.LOCATION_ITEMS:
+            return self.start_location.inventory
+        if typ == CurrentContainerType.PROTAGONIST_ITEMS:
+            return self.calcifer.inventory
 
     def test_quits_on_quit_action(self):
         self.controller.action = UserAction(self.quit_verb)
