@@ -2,11 +2,13 @@ import abc
 import textwrap
 
 from engine.container_factory import CurrentContainerFactory, CurrentContainerType
+from engine.game import Game
+from pattern.observer import Subject, ObservedAttribute
+from ui.text.parser import TextParser, InvalidUserActionException
 from world.character import Character
-from world.verb import UserAction, VerbType
 from world.mappings import VerbMapping
 from world.scene import Scene
-from ui.text.parser import TextParser, InvalidUserActionException
+from world.verb import UserAction, VerbType
 
 
 class OutputController(abc.ABC):
@@ -15,7 +17,7 @@ class OutputController(abc.ABC):
         pass
 
 
-class InputController(abc.ABC):
+class InputController(Subject, abc.ABC):
     @abc.abstractmethod
     def await_user_action(self) -> UserAction:
         pass
@@ -42,17 +44,19 @@ class OutputControllerCommandLine(OutputController):
 
 class InputControllerCommandLine(InputController):
 
-    @property
-    def action(self):
-        return None
-
-    def __init__(self, verbs: VerbMapping):
+    def __init__(self, verbs: VerbMapping, game: Game):
+        super().__init__()
         self._parser = TextParser(verbs)
         self._container_factory = CurrentContainerFactory()
+        self._game = game
+        self._action = None
+
+    action = ObservedAttribute('action')
 
     def await_user_action(self):
         print()
         print("What would you like to do?")
+        self._container_factory.protagonist = self._game.protagonist
         while True:
             try:
                 parsed = self._parser.parse_user_action(input())
@@ -61,7 +65,8 @@ class InputControllerCommandLine(InputController):
                 continue
 
             if parsed.object_ref_1 is None:
-                return UserAction(verb=parsed.verb)
+                self.action = UserAction(verb=parsed.verb)
+                return
 
             visible_objects = self._container_factory.create(CurrentContainerType.VISIBLE)
             try:
@@ -75,7 +80,8 @@ class InputControllerCommandLine(InputController):
                 if obj.name not in source or obj.name in destination:
                     print(f"You can't {parsed.verb.name} the {obj}")
                     continue
-            return UserAction(verb=parsed.verb, object=obj)
+            self.action = UserAction(verb=parsed.verb, object=obj)
+            return
 
     def set_protagonist(self, protagonist) -> None:
         self._container_factory.protagonist = protagonist

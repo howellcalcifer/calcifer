@@ -4,6 +4,7 @@ from unittest import TestCase
 from unittest.mock import patch, Mock, call
 
 from engine.container_factory import CurrentContainerType
+from engine.game import Game
 from ui.controllers import OutputControllerCommandLine, InputControllerCommandLine
 from ui.text.parser import InvalidUserActionException, ParsedResult
 from world.item import Inventory, Item
@@ -97,7 +98,8 @@ class TestInputCommandLineUserAction(TestCase):
     @patch('ui.controllers.CurrentContainerFactory')
     def setUp(self, mock_container_factory_class, mock_text_parser_class) -> None:
         verbs = {'nod': nod_verb, 'frown': frown_verb, 'take': take_verb}
-        self.controller = InputControllerCommandLine(verbs)
+        self.game = Mock(Game)
+        self.controller = InputControllerCommandLine(verbs, self.game)
         self.mock_parser = mock_text_parser_class.return_value
         container_factory = mock_container_factory_class.return_value
         self.inventory = Inventory()
@@ -135,16 +137,16 @@ class TestInputCommandLineUserAction(TestCase):
 
             raw_inputs = [user_input.input for user_input in case.inputs]
             test_message = "for inputs " + ", ".join(list(raw_inputs))
-            actual_action = self.controller.await_user_action()
-            self.assertEqual(case.expected_action, actual_action, msg=test_message)
+            self.controller.await_user_action()
+            self.assertEqual(case.expected_action, self.controller.action, msg=test_message)
 
     @patch('builtins.input')
     def test_permits_visible_object(self, _):
         self.visible.add(rock_item)
         self.mock_parser.parse_user_action.return_value = ParsedResult(look_verb, "rock")
         expected_action = UserAction(verb=look_verb, object=rock_item)
-        actual_action = self.controller.await_user_action()
-        self.assertEqual(expected_action, actual_action)
+        self.controller.await_user_action()
+        self.assertEqual(expected_action, self.controller.action)
 
     @patch('builtins.input')
     def test_rejects_invisible_object(self, _):
@@ -152,8 +154,8 @@ class TestInputCommandLineUserAction(TestCase):
         self.mock_parser.parse_user_action.side_effect = [ParsedResult(look_verb, "sock"),
                                                           ParsedResult(look_verb, "rock")]
         expected_action = UserAction(verb=look_verb, object=rock_item)
-        actual_action = self.controller.await_user_action()
-        self.assertEqual(expected_action, actual_action)
+        self.controller.await_user_action()
+        self.assertEqual(expected_action, self.controller.action)
 
     @patch('builtins.input')
     def test_permits_taking_ground_object(self, _):
@@ -161,8 +163,8 @@ class TestInputCommandLineUserAction(TestCase):
         self.ground.add(rock_item)
         self.mock_parser.parse_user_action.side_effect = [ParsedResult(take_verb, "rock")]
         expected_action = UserAction(verb=take_verb, object=rock_item)
-        actual_action = self.controller.await_user_action()
-        self.assertEqual(expected_action, actual_action)
+        self.controller.await_user_action()
+        self.assertEqual(expected_action, self.controller.action)
 
     @patch('builtins.input')
     def test_rejects_taking_inventory_object(self, _):
@@ -173,8 +175,8 @@ class TestInputCommandLineUserAction(TestCase):
         self.mock_parser.parse_user_action.side_effect = [ParsedResult(take_verb, "rock"),
                                                           ParsedResult(take_verb, "sock")]
         expected_action = UserAction(verb=take_verb, object=sock_item)
-        actual_action = self.controller.await_user_action()
-        self.assertEqual(expected_action, actual_action)
+        self.controller.await_user_action()
+        self.assertEqual(expected_action, self.controller.action)
 
     @patch('builtins.input')
     def test_rejects_dropping_non_inventory_object(self, _):
@@ -184,5 +186,5 @@ class TestInputCommandLineUserAction(TestCase):
         self.mock_parser.parse_user_action.side_effect = [ParsedResult(drop_verb, "sock"),
                                                           ParsedResult(drop_verb, "rock")]
         expected_action = UserAction(verb=drop_verb, object=rock_item)
-        actual_action = self.controller.await_user_action()
-        self.assertEqual(expected_action, actual_action)
+        self.controller.await_user_action()
+        self.assertEqual(expected_action, self.controller.action)

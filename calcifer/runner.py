@@ -1,5 +1,6 @@
 # This is a game in which you are the fire demon calcifer
 from engine.game import Game
+from engine.input_game_observer import InputGameObserver
 from engine.inventory_output_observer import InventoryOutputObserver
 from engine.protagonist_output_observer import ProtagonistOutputObserver
 from ui.controllers import OutputControllerCommandLine, InputControllerCommandLine
@@ -15,16 +16,18 @@ def main():
     start_location_name = 'start'
     protagonist_name = 'calcifer'
     protagonist = characters[protagonist_name]
-
-    input_controller = InputControllerCommandLine(verbs)
-    game = Game(input_controller)
+    game = Game()
+    input_controller = InputControllerCommandLine(verbs, game)
 
     output_controller = OutputControllerCommandLine()
     protagonist_observer = ProtagonistOutputObserver(output_controller)
     inventory_observer = InventoryOutputObserver(output_controller)
+    input_observer = InputGameObserver(game)
     protagonist.subscribe(observer=protagonist_observer)
     protagonist.inventory.subscribe(observer=inventory_observer)
+    input_controller.subscribe(input_observer)
 
     protagonist.location = locations[start_location_name]
     game.protagonist = protagonist
-    game.start()
+    while game.running:
+        input_controller.await_user_action()
