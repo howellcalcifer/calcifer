@@ -5,7 +5,6 @@ from engine.container_factory import CurrentContainerFactory, CurrentContainerTy
 from engine.game import Game
 from pattern.observer import Subject, ObservedAttribute
 from ui.text.parser import TextParser, InvalidUserActionException
-from world.character import Character
 from world.mappings import VerbMapping
 from world.scene import Scene
 from world.verb import UserAction, VerbType
@@ -18,21 +17,18 @@ class OutputController(abc.ABC):
 
 
 class InputController(Subject, abc.ABC):
+
+    @property
+    @abc.abstractmethod
+    def action(self) -> UserAction:
+        pass
+
     @abc.abstractmethod
     def await_user_action(self) -> UserAction:
         pass
 
     @abc.abstractmethod
     def start(self) -> None:
-        pass
-
-    @abc.abstractmethod
-    def set_protagonist(self, protagonist: Character) -> None:
-        pass
-
-    @property
-    @abc.abstractmethod
-    def action(self) -> UserAction:
         pass
 
 
@@ -94,9 +90,6 @@ class InputControllerCommandLine(InputController):
                     continue
             self.action = UserAction(verb=parsed.verb, object=obj)
             return
-
-    def set_protagonist(self, protagonist) -> None:
-        self._container_factory.protagonist = protagonist
 
     def start(self):
         while self._game.running:
