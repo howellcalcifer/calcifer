@@ -6,6 +6,8 @@ Date: 2023-06-24
 
 Accepted
 
+Amended by [5. Make input and game observer subjects, not inventory and protagonist](0005-make-input-and-game-observer-subjects-not-inventory-and-protagonist.md)
+
 ## Context
 
 Right now, I want to be able to respond to changes in inventory state and character actions like "look" 
