@@ -1,0 +1,11 @@
+take rock
+go east
+drop rock
+look
+go west
+go east
+take rock
+go west
+go south
+go north
+quit

@@ -4,3 +4,11 @@ library:
     - rock
   characters:
     - calcifer
+  exits:
+    - direction: west
+      location: hall
+hall:
+  description: "A large hall in a castle."
+  exits:
+    - direction: east
+      location: library

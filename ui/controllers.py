@@ -61,8 +61,6 @@ class InputControllerCommandLine(InputController):
     action = ObservedAttribute('action')
 
     def await_user_action(self):
-        print()
-        print("What would you like to do?")
         while True:
             try:
                 parsed = self._parser.parse_user_action(input())
@@ -71,7 +69,10 @@ class InputControllerCommandLine(InputController):
                 continue
 
             if parsed.object_ref_1 is None:
-                self.action = UserAction(verb=parsed.verb)
+                if parsed.verb.type != VerbType.LOOK:
+                    self.action = UserAction(verb=parsed.verb)
+                else:
+                    self.action = UserAction(verb=parsed.verb, object=self._game.protagonist.location)
                 return
 
             visible_objects = self._game.container(CurrentContainerType.VISIBLE)
@@ -83,8 +84,20 @@ class InputControllerCommandLine(InputController):
             if parsed.verb.type == VerbType.INVENTORY:
                 source = self._game.container(parsed.verb.source)
                 destination = self._game.container(parsed.verb.destination)
-                if obj.name not in source or obj.name in destination:
-                    print(f"You can't {parsed.verb.name} the {obj}")
+                try:
+                    if obj.name not in source or obj.name in destination:
+                        print(f"You can't {parsed.verb.name} that.")
+                        continue
+                except AttributeError:
+                    print(f"You can't {parsed.verb.name} that.")
+                    continue
+            if parsed.verb.type == VerbType.MOVE:
+                try:
+                    if obj.direction not in self._game.container(CurrentContainerType.LOCATION_EXITS):
+                        print(f"You can't go {obj.direction}")
+                        continue
+                except AttributeError:
+                    print("You can't go there.")
                     continue
             self.action = UserAction(verb=parsed.verb, object=obj)
             return

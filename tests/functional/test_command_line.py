@@ -23,7 +23,7 @@ class Scenario:
 
 
 def test_command_line(capsys):
-    test_scenarios = ['takedrop', 'move']
+    test_scenarios = ['takedrop', 'object_permanence']
     for scenario_name in test_scenarios:
 
         scenario = Scenario.get(scenario_name)
@@ -32,7 +32,7 @@ def test_command_line(capsys):
         with capsys.disabled():
             print(f"Running scenario {scenario_name}")
         with patch('builtins.input', side_effect=input_commands):
-            runner.main()
+            runner.main(data_module='data.test')
         actual_output_lines = capsys.readouterr().out.split("\n")[0:-1]
         with capsys.disabled():
             print(f"Finished running scenario {scenario_name}")

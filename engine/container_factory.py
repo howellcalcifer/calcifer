@@ -11,8 +11,7 @@ class CurrentContainerType(Enum):
     PROTAGONIST_ITEMS = 'inventory'
     LOCATION_ITEMS = 'ground'
     LOCATION_CHARACTERS = 'visible_person'
-    LOCATION_ALL = 'visible_location'
-    ETHER_CHARACTERS = 'ether_person'
+    LOCATION_EXITS = 'exits'
     CHARACTER_ITEMS = 'character_inventory'
     ITEM_ITEMS = 'item_inventory'
     VISIBLE = 'visible'
@@ -26,8 +25,11 @@ class CurrentContainerFactory(ABC):
             return self.protagonist.location.inventory
         if typ == CurrentContainerType.PROTAGONIST_ITEMS:
             return self.protagonist.inventory
+        if typ == CurrentContainerType.LOCATION_EXITS:
+            return self.protagonist.location.exits
         if typ == CurrentContainerType.VISIBLE:
-            subcontainers = [self.protagonist.location.inventory, self.protagonist.inventory]
+            subcontainers = [self.protagonist.location.inventory, self.protagonist.inventory,
+                             self.protagonist.location.exits]
             return CurrentContainerCombined(subcontainers)
 
 
