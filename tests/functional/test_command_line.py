@@ -22,11 +22,18 @@ class Scenario:
         return cls(input_lines, output_lines)
 
 
-def test_take_drop(capsys):
-    scenario = Scenario.get('takedrop')
-    input_commands = scenario.input
-    expected_output = scenario.output
-    with patch('builtins.input', side_effect=input_commands):
-        runner.main()
-    actual_output_lines = capsys.readouterr().out.split("\n")[0:-1]
-    assert actual_output_lines == expected_output
+def test_command_line(capsys):
+    test_scenarios = ['takedrop', 'move']
+    for scenario_name in test_scenarios:
+
+        scenario = Scenario.get(scenario_name)
+        input_commands = scenario.input
+        expected_output = scenario.output
+        with capsys.disabled():
+            print(f"Running scenario {scenario_name}")
+        with patch('builtins.input', side_effect=input_commands):
+            runner.main()
+        actual_output_lines = capsys.readouterr().out.split("\n")[0:-1]
+        with capsys.disabled():
+            print(f"Finished running scenario {scenario_name}")
+        assert actual_output_lines == expected_output

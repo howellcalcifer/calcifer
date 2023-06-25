@@ -4,7 +4,20 @@ library:
     - rock
   characters:
     - calcifer
+  exits:
+    east:
+      location: pub
+    south:
+      location: clearing
 pub:
   description: "A place that serves beer."
   characters:
     - howell
+  exits:
+    west:
+      location: library
+clearing:
+  description: "A clearing in a forest."
+  exits:
+    north:
+      location: library

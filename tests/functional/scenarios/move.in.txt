@@ -1,0 +1,9 @@
+take rock
+east
+drop rock
+look
+west
+south
+north
+north
+quit
