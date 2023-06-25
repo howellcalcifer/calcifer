@@ -5,9 +5,6 @@ from enum import Enum
 from typing import Optional
 
 from engine.container_factory import CurrentContainerType
-from world.character import Character
-from world.item import Item
-from world.location import Exit
 from world.scene import Scene
 
 
@@ -45,14 +42,5 @@ class Verb:
 class InventoryVerb(Verb):
     source: CurrentContainerType
     destination: CurrentContainerType
-
-
-@dataclasses.dataclass(frozen=True)
-class UserAction:
-    verb: Verb
-    object: Optional[Item | Character | Exit] = None
-
-    def __hash__(self):
-        return hash((self.verb, self.object))
 
 

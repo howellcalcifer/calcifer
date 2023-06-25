@@ -27,3 +27,5 @@ class GameOutputObserver(Observer):
             elif action.verb.type == VerbType.MOVE:
                 self.output.show_scene(Scene(f"You go {action.object.direction}.\n"))
                 self.output.show_scene(action.object.leads_to.description)
+        if game.changed_observed_attribute == 'latest_rejected_action':
+            self.output.show_scene(Scene(str(game.latest_rejected_action)))

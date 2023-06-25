@@ -1,7 +1,4 @@
-import dataclasses
-from typing import Optional
-
-from world.verb import Verb
+from engine.action import UnresolvedAction
 from world.mappings import VerbMapping
 
 
@@ -9,22 +6,15 @@ class InvalidUserActionException(Exception):
     pass
 
 
-@dataclasses.dataclass
-class ParsedResult:
-    verb: Verb
-    object_ref_1: Optional[str] = None
-    object_ref_2: Optional[str] = None
-
-
 class TextParser:
     def __init__(self, verbs: VerbMapping):
         self.verbs = verbs
 
-    def parse_user_action(self, text: str) -> ParsedResult:
+    def parse_user_action(self, text: str) -> UnresolvedAction:
         words = text.split()
         verb = self.parse_verb(words)
         obj = self.parse_object(words, verb)
-        return ParsedResult(verb=verb, object_ref_1=obj)
+        return UnresolvedAction(verb=verb, object_ref_1=obj)
 
     @staticmethod
     def parse_object(words, verb):

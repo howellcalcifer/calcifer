@@ -16,4 +16,5 @@ You go south.
 A clearing in a forest.
 You go north.
 A library in a castle.
+You can't go that way.
 Goodbye for now.

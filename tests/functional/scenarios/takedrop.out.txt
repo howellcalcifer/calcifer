@@ -2,5 +2,6 @@ You take the rock.
 You smile.
 You drop the rock.
 You grimace.
+You can't drop that.
 You bow gracefully.
 Goodbye for now.

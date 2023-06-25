@@ -1,16 +1,21 @@
+import dataclasses
 from unittest import TestCase
-from unittest.mock import Mock, call
+from unittest.mock import Mock, call, patch
 
+from engine.action_resolver import ActionResolver, InvalidUnresolvedAction
 from engine.container_factory import CurrentContainerFactory, CurrentContainerType
 from engine.game import Game
 from engine.game_output_observer import GameOutputObserver
 from engine.input_game_observer import InputGameObserver
+from tests.harness.harness import TestGameCase
+from tests.harness.verbs import verbs
 from ui.controllers import InputController, OutputController
 from world.character import Character
 from world.item import Inventory, Item
 from world.location import Location, Exit
 from world.scene import Scene
-from world.verb import Verb, VerbType, InventoryVerb, UserAction
+from world.verb import Verb, VerbType, InventoryVerb
+from engine.action import UserAction, UnresolvedAction
 
 
 class TestCurrentContainers(TestCase):
@@ -54,80 +59,137 @@ class TestCurrentContainers(TestCase):
         self.assertFalse("west" in container)
 
 
-class TestInputGameObserver(TestCase):
+@dataclasses.dataclass
+class ActionToSceneCase:
+    action: UserAction
+    scenes: list[Scene]
+
+
+@dataclasses.dataclass
+class ResolveActionCase:
+    input_unresolved: UnresolvedAction
+    game_context: dict
+    expected_resolved: UserAction
+
+
+@dataclasses.dataclass
+class RejectActionCase:
+    input_unresolved: UnresolvedAction
+    game_context: dict
+    expected_reject_message: str
+
+
+class TestActionResolver(TestGameCase):
 
     def setUp(self) -> None:
-        self.start_location = Mock(spec=Location)
-        self.start_location.scene = Mock(spec=Scene)
-        self.start_location.inventory = Mock(spec=Inventory)
-        self.calcifer = Mock(spec=Character)
-        self.calcifer.description = Mock(spec=Scene)
-        self.calcifer.location = self.start_location
-        self.calcifer.inventory = Mock(spec=Inventory)
-        self.look_verb = Verb(name="look", type=VerbType.LOOK, description=None, transitive=True, intransitive=True)
-        self.nod_verb = Verb(name="nod", type=VerbType.GESTURE, description=None, transitive=True, intransitive=False)
-        self.bow_verb = Verb(name="bow", type=VerbType.GESTURE, description=Scene("You bow gracefully."),
-                             transitive=True, intransitive=False)
-        self.quit_verb = Verb(name="quit", type=VerbType.QUIT, description=None, intransitive=True, transitive=False)
-        self.take_verb = InventoryVerb(name="take", type=VerbType.INVENTORY, description=None, intransitive=False,
-                                       transitive=False, source=CurrentContainerType.LOCATION_ITEMS,
-                                       destination=CurrentContainerType.PROTAGONIST_ITEMS)
-        self.drop_verb = InventoryVerb(name="drop", type=VerbType.INVENTORY, description=None, intransitive=False,
-                                       transitive=False, source=CurrentContainerType.PROTAGONIST_ITEMS,
-                                       destination=CurrentContainerType.LOCATION_ITEMS)
-        self.bob_verb = Verb(name="bob", type=VerbType.GESTURE, description=Scene("You bob around a bit"),
-                             transitive=False, intransitive=True)
-        self.rock_item = Item(name="rock")
-        self.game = Mock(Game)
-        self.game.protagonist = self.calcifer
+        super().setUp(mock_inventory=False)
+        self.resolver = ActionResolver(self.game)
+
+    def test_resolve_actions(self):
+        cases = [
+            ResolveActionCase(input_unresolved=UnresolvedAction(self.verbs['nod']),
+                              game_context={},
+                              expected_resolved=UserAction(self.verbs['nod'])),
+            ResolveActionCase(input_unresolved=UnresolvedAction(self.verbs['look']),
+                              game_context={},
+                              expected_resolved=UserAction(self.verbs['look'], self.location)),
+            ResolveActionCase(input_unresolved=UnresolvedAction(self.verbs['look'], 'rock'),
+                              game_context={'ground': self.items['rock']},
+                              expected_resolved=UserAction(self.verbs['look'], self.items['rock'])),
+            ResolveActionCase(input_unresolved=UnresolvedAction(self.verbs['take'], 'rock'),
+                              game_context={'ground': self.items['rock']},
+                              expected_resolved=UserAction(self.verbs['take'], self.items['rock'])),
+            ResolveActionCase(input_unresolved=UnresolvedAction(self.verbs['go'], 'east'),
+                              game_context={'exit': Exit("east", self.locations['east_place'])},
+                              expected_resolved=UserAction(self.verbs['go'],
+                                                           Exit("east", self.locations['east_place']))),
+        ]
+        for case in cases:
+            self.add_to_game(**case.game_context)
+            actual_action = self.resolver.resolve(case.input_unresolved)
+            self.assertEqual(case.expected_resolved, actual_action)
+
+    def test_reject_actions(self):
+        cases = [
+            RejectActionCase(input_unresolved=UnresolvedAction(self.verbs['take'], "east"),
+                             game_context={'exit': Exit("east", self.locations['east_place'])},
+                             expected_reject_message="You can't take that."),
+            RejectActionCase(input_unresolved=UnresolvedAction(self.verbs['go'], "rock"),
+                             game_context={'ground': self.items['rock']},
+                             expected_reject_message="You can't go there."),
+            RejectActionCase(input_unresolved=UnresolvedAction(self.verbs['look'], "rock"),
+                             game_context={},
+                             expected_reject_message="You can't see any rock."),
+            RejectActionCase(input_unresolved=UnresolvedAction(self.verbs['take'], "rock"),
+                             game_context={'inventory': self.items['rock']},
+                             expected_reject_message="You can't take that."),
+
+        ]
+        for case in cases:
+            self.clear_game()
+            self.add_to_game(**case.game_context)
+            with self.assertRaises(InvalidUnresolvedAction) as context:
+                self.resolver.resolve(case.input_unresolved)
+            self.assertEqual(case.expected_reject_message, str(context.exception))
+
+
+class TestInputGameObserver(TestGameCase):
+
+    @patch('engine.input_game_observer.ActionResolver')
+    def setUp(self, mock_action_resolver_class) -> None:
+        super().setUp(mock_inventory=True)
         self.game.running = True
-        self.game.container.side_effect = self._mock_container
         self.controller = Mock(InputController)
         self.observer = InputGameObserver(self.game)
+        self.mock_action_resolver = mock_action_resolver_class.return_value
+        self.resolve = self.mock_action_resolver.resolve
 
-    def _mock_container(self, typ: CurrentContainerType):
-        if typ == CurrentContainerType.LOCATION_ITEMS:
-            return self.start_location.inventory
-        if typ == CurrentContainerType.PROTAGONIST_ITEMS:
-            return self.calcifer.inventory
+    def test_resolves_controller_action(self):
+        input_action = UnresolvedAction(self.verbs['nod'])
+        self.controller.action = input_action
+        self.observer.update(self.controller)
+        self.resolve.assert_called_with(input_action)
 
     def test_quits_on_quit_action(self):
-        self.controller.action = UserAction(self.quit_verb)
+        self.resolve.return_value = UserAction(self.verbs['quit'])
         self.observer.update(self.controller)
         self.assertFalse(self.game.running)
 
     def test_takes_on_take_action(self):
-        self.controller.action = UserAction(self.take_verb, self.rock_item)
+        self.resolve.return_value = UserAction(self.verbs['take'], self.items['rock'])
         self.observer.update(self.controller)
-
-        self.game.protagonist.inventory.add.assert_called_with(self.rock_item)
-        self.game.protagonist.location.inventory.remove.assert_called_with(self.rock_item)
+        self.game.protagonist.inventory.add.assert_called_with(self.items['rock'])
+        self.game.protagonist.location.inventory.remove.assert_called_with(self.items['rock'])
 
     def test_drops_on_drop_action(self):
-        self.controller.action = UserAction(self.drop_verb, self.rock_item)
+        self.resolve.return_value = UserAction(self.verbs['drop'], self.items['rock'])
         self.observer.update(self.controller)
-
-        self.game.protagonist.inventory.remove.assert_called_with(self.rock_item)
-        self.game.protagonist.location.inventory.add.assert_called_with(self.rock_item)
+        self.game.protagonist.inventory.remove.assert_called_with(self.items['rock'])
+        self.game.protagonist.location.inventory.add.assert_called_with(self.items['rock'])
 
     def test_move_on_move_action(self):
-        go_verb = Verb("go", VerbType.MOVE, description=None, transitive=True, intransitive=False)
-        east_place = Location("east place", Inventory(), Scene("A place in the east"))
-        east_exit = Exit("east", east_place)
-        self.controller.action = UserAction(go_verb, east_exit)
+        east_exit = Exit("east", self.locations['east_place'])
+        self.resolve.return_value = UserAction(self.verbs['go'], east_exit)
         self.observer.update(self.controller)
-        self.assertEqual(self.game.protagonist.location, east_place)
+        self.assertEqual(self.game.protagonist.location, self.locations['east_place'])
+
+    def test_publishes_rejected_action(self):
+        rejected_action = InvalidUnresolvedAction("A bad thing happened")
+        self.resolve.side_effect = rejected_action
+        self.observer.update(self.controller)
+        self.assertEqual(self.game.latest_rejected_action, rejected_action)
 
     def test_set_latest_action(self):
-        self.controller.action = UserAction(self.drop_verb, self.rock_item)
+        resolved_action = UserAction(self.verbs['drop'], self.items['rock'])
+        self.resolve.return_value = resolved_action
         self.observer.update(self.controller)
-        self.assertEqual(self.game.latest_action, self.controller.action)
+        self.assertEqual(self.game.latest_action, resolved_action)
 
 
-class TestGameOutputObserver(TestCase):
+class TestGameOutputObserver(TestGameCase):
 
     def setUp(self) -> None:
-        self.game = Mock(Game)
+        super().setUp(mock_inventory=False)
         self.output = Mock(OutputController)
         self.observer = GameOutputObserver(self.output)
 
@@ -145,41 +207,23 @@ class TestGameOutputObserver(TestCase):
         self.observer.update(self.game)
         self.output.show_scene.assert_called_with(Scene("You seem nice."))
 
-    def test_shows_location(self):
-        look_verb = Verb("look", VerbType.LOOK, None, True, True)
-        location_description = Scene("This is a place")
-        location = Location("place", Inventory(), location_description)
-        look_action = UserAction(look_verb, location)
-        self.game.latest_action = look_action
-        self.game.changed_observed_attribute = 'latest_action'
-        self.observer.update(self.game)
-        self.output.show_scene.assert_called_with(location_description)
+    def test_shows_scenes_for_action(self):
+        cases = [
+            ActionToSceneCase(action=UserAction(self.verbs['look'], self.location), scenes=[self.location.description]),
+            ActionToSceneCase(action=UserAction(self.verbs['nod']), scenes=[self.verbs['nod'].description]),
+            ActionToSceneCase(action=UserAction(self.verbs['take'], self.items['rock']),
+                              scenes=[Scene("You take the rock.")]),
+            ActionToSceneCase(action=UserAction(self.verbs['go'], Exit('east', self.locations['east_place'])),
+                              scenes=[Scene("You go east.\n"), self.locations['east_place'].description])
+        ]
+        for case in cases:
+            self.game.latest_action = case.action
+            self.game.changed_observed_attribute = 'latest_action'
+            self.observer.update(self.game)
+            self.output.show_scene.assert_has_calls([call(scene) for scene in case.scenes])
 
-    def test_shows_gesture(self):
-        nod_verb = Verb("nod", VerbType.GESTURE, Scene("You nod."), True, False)
-        nod_action = UserAction(nod_verb)
-        self.game.latest_action = nod_action
-        self.game.changed_observed_attribute = 'latest_action'
+    def test_shows_scene_for_rejected_action(self):
+        self.game.latest_rejected_action = InvalidUnresolvedAction("That's a fail")
+        self.game.changed_observed_attribute = 'latest_rejected_action'
         self.observer.update(self.game)
-        self.output.show_scene.assert_called_with(Scene("You nod."))
-
-    def test_shows_take_action(self):
-        take_verb = Verb("take", VerbType.INVENTORY, None, False, True)
-        rock_item = Item("rock")
-        take_action = UserAction(take_verb, rock_item)
-        self.game.latest_action = take_action
-        self.game.changed_observed_attribute = 'latest_action'
-        self.observer.update(self.game)
-        self.output.show_scene.assert_called_with(Scene("You take the rock."))
-
-    def test_shows_move(self):
-        move_verb = Verb("go", VerbType.MOVE, None, False, True)
-        east_place_description = Scene("The place to the east")
-        east_place = Location("east place", Inventory(), east_place_description)
-        east_exit = Exit("east", east_place)
-        move_action = UserAction(move_verb, east_exit)
-        self.game.latest_action = move_action
-        self.game.changed_observed_attribute = 'latest_action'
-        self.observer.update(self.game)
-        expected_calls = [call(Scene("You go east.\n")), call(east_place_description)]
-        self.output.show_scene.assert_has_calls(expected_calls)
+        self.output.show_scene.assert_called_with(Scene("That's a fail"))

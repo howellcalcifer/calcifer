@@ -1,13 +1,13 @@
 import abc
 import textwrap
 
-from engine.container_factory import CurrentContainerType
+from engine.action import UserAction, UnresolvedAction
+from engine.action_resolver import ActionResolver, InvalidUnresolvedAction
 from engine.game import Game
 from pattern.observer import Subject, ObservedAttribute
 from ui.text.parser import TextParser, InvalidUserActionException
 from world.mappings import VerbMapping
 from world.scene import Scene
-from world.verb import UserAction, VerbType
 
 
 class OutputController(abc.ABC):
@@ -20,11 +20,11 @@ class InputController(Subject, abc.ABC):
 
     @property
     @abc.abstractmethod
-    def action(self) -> UserAction:
+    def action(self) -> UnresolvedAction:
         pass
 
     @abc.abstractmethod
-    def await_user_action(self) -> UserAction:
+    def await_user_action(self) -> UnresolvedAction:
         pass
 
     @abc.abstractmethod
@@ -58,48 +58,15 @@ class InputControllerCommandLine(InputController):
         self._game = game
         self._action = None
 
-    action = ObservedAttribute('action')
+    action: UnresolvedAction = ObservedAttribute('action')
 
     def await_user_action(self):
         while True:
             try:
-                parsed = self._parser.parse_user_action(input())
+                self.action = self._parser.parse_user_action(input())
             except InvalidUserActionException as e:
                 print(e)
                 continue
-
-            if parsed.object_ref_1 is None:
-                if parsed.verb.type != VerbType.LOOK:
-                    self.action = UserAction(verb=parsed.verb)
-                else:
-                    self.action = UserAction(verb=parsed.verb, object=self._game.protagonist.location)
-                return
-
-            visible_objects = self._game.container(CurrentContainerType.VISIBLE)
-            try:
-                obj = visible_objects[parsed.object_ref_1]
-            except KeyError:
-                print(f"You can't see any {parsed.object_ref_1}")
-                continue
-            if parsed.verb.type == VerbType.INVENTORY:
-                source = self._game.container(parsed.verb.source)
-                destination = self._game.container(parsed.verb.destination)
-                try:
-                    if obj.name not in source or obj.name in destination:
-                        print(f"You can't {parsed.verb.name} that.")
-                        continue
-                except AttributeError:
-                    print(f"You can't {parsed.verb.name} that.")
-                    continue
-            if parsed.verb.type == VerbType.MOVE:
-                try:
-                    if obj.direction not in self._game.container(CurrentContainerType.LOCATION_EXITS):
-                        print(f"You can't go {obj.direction}")
-                        continue
-                except AttributeError:
-                    print("You can't go there.")
-                    continue
-            self.action = UserAction(verb=parsed.verb, object=obj)
             return
 
     def start(self):

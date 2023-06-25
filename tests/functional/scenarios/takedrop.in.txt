@@ -2,5 +2,6 @@ take rock
 smile
 drop rock
 grimace
+drop rock
 bow
 quit

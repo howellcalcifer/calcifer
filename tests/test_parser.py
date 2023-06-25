@@ -6,14 +6,15 @@ from engine.container_factory import CurrentContainerType
 from world.item import Item, Inventory
 from world.verb import Verb, VerbType, InventoryVerb
 from world.mappings import VerbMapping
-from ui.text.parser import TextParser, InvalidUserActionException, ParsedResult
+from ui.text.parser import TextParser, InvalidUserActionException
+from engine.action import UnresolvedAction
 
 
 @dataclasses.dataclass
 class UserInputCase:
     user_input: str
     expect_invalid: bool
-    expected_result: Optional[ParsedResult] = None
+    expected_result: Optional[UnresolvedAction] = None
     expect_invalid_message: Optional[str] = None
 
 
@@ -43,20 +44,20 @@ class TestTranslate(TestCase):
 
     def test_translate_user_action(self):
         cases = [UserInputCase(user_input="nod", expect_invalid=False,
-                               expected_result=ParsedResult(verb=nod_verb)),
+                               expected_result=UnresolvedAction(verb=nod_verb)),
                  UserInputCase(user_input="move", expect_invalid=True),
                  UserInputCase(user_input="take", expect_invalid=True),
                  UserInputCase(user_input="drop rock", expect_invalid=False,
-                               expected_result=ParsedResult(verb=drop_verb, object_ref_1="rock")),
+                               expected_result=UnresolvedAction(verb=drop_verb, object_ref_1="rock")),
                  UserInputCase(user_input="take rock", expect_invalid=False,
-                               expected_result=ParsedResult(verb=take_verb, object_ref_1="rock")),
+                               expected_result=UnresolvedAction(verb=take_verb, object_ref_1="rock")),
                  UserInputCase(user_input="look rock", expect_invalid=False,
-                               expected_result=ParsedResult(verb=look_verb, object_ref_1="rock")),
+                               expected_result=UnresolvedAction(verb=look_verb, object_ref_1="rock")),
                  UserInputCase(user_input="look", expect_invalid=False,
-                               expected_result=ParsedResult(verb=look_verb)),
+                               expected_result=UnresolvedAction(verb=look_verb)),
                  UserInputCase(user_input="quit rock", expect_invalid=True),
                  UserInputCase(user_input="go east", expect_invalid=False,
-                               expected_result=ParsedResult(verb=go_verb, object_ref_1="east"))]
+                               expected_result=UnresolvedAction(verb=go_verb, object_ref_1="east"))]
         self.parser.visible_entities = entity_dict
         for case in cases:
             test_case_message = f"for input '{case.user_input}'"

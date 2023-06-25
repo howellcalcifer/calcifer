@@ -8,4 +8,5 @@ take rock
 go west
 go south
 go north
+go north
 quit

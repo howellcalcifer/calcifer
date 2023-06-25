@@ -1,13 +1,15 @@
+from engine.action import UserAction
 from engine.container_factory import CurrentContainerFactory, CurrentContainerType
+from engine.exceptions import InvalidUnresolvedAction
 from pattern.observer import Subject, ObservedAttribute
 from world.character import Character
-from world.verb import UserAction
 
 
 class Game(Subject):
     protagonist = ObservedAttribute('protagonist')
     running = ObservedAttribute('running')
     latest_action: UserAction = ObservedAttribute('latest_action')
+    latest_rejected_action: InvalidUnresolvedAction = ObservedAttribute('latest_rejected_action')
 
     def __init__(self):
         super().__init__()
