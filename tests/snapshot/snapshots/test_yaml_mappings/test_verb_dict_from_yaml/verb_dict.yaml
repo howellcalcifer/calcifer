@@ -31,14 +31,28 @@ dictitems:
     type: &id006 !!python/object/apply:builtins.getattr
     - *id001
     - INVENTORY
-  east: !!python/object:world.verb.Verb
+  go: !!python/object:world.verb.Verb
     description: null
     intransitive: false
-    name: east
+    name: go
     transitive: true
     type: !!python/object/apply:builtins.getattr
     - *id001
     - MOVE
+  grimace: !!python/object:world.verb.Verb
+    description: null
+    intransitive: true
+    name: grimace
+    transitive: null
+    type: *id003
+  quit: !!python/object:world.verb.Verb
+    description: null
+    intransitive: true
+    name: quit
+    transitive: null
+    type: !!python/object/apply:builtins.getattr
+    - *id001
+    - QUIT
   sit: !!python/object:world.verb.Verb
     description: null
     intransitive: true

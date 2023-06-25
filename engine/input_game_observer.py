@@ -27,3 +27,5 @@ class InputGameObserver(Observer):
                                                      description=(
                                                          action.verb.description if action.verb.description else
                                                          Scene(f"You {action.verb.name}.")))
+        if action.verb.type == VerbType.MOVE:
+            self._game.protagonist.location = action.object.leads_to

@@ -26,8 +26,10 @@ drop_verb = InventoryVerb(name='drop', type=VerbType.INVENTORY, description=None
                           destination=CurrentContainerType.LOCATION_ITEMS)
 look_verb = Verb(name='look', type=VerbType.LOOK, description=None, intransitive=True, transitive=True)
 quit_verb = Verb(name='quit', type=VerbType.QUIT, description=None, intransitive=True, transitive=False)
+go_verb = Verb(name='go', type=VerbType.MOVE, description=None, intransitive=False, transitive=True)
 verbs = VerbMapping(
-    [('drop', drop_verb), ('nod', nod_verb), ('take', take_verb), ('look', look_verb), ('quit', quit_verb)])
+    [('drop', drop_verb), ('nod', nod_verb), ('take', take_verb), ('look', look_verb), ('quit', quit_verb),
+     ('go', go_verb)])
 rock_item = Item('rock')
 entity_dict = {'rock': rock_item}
 
@@ -52,7 +54,9 @@ class TestTranslate(TestCase):
                                expected_result=ParsedResult(verb=look_verb, object_ref_1="rock")),
                  UserInputCase(user_input="look", expect_invalid=False,
                                expected_result=ParsedResult(verb=look_verb)),
-                 UserInputCase(user_input="quit rock", expect_invalid=True)]
+                 UserInputCase(user_input="quit rock", expect_invalid=True),
+                 UserInputCase(user_input="go east", expect_invalid=False,
+                               expected_result=ParsedResult(verb=go_verb, object_ref_1="east"))]
         self.parser.visible_entities = entity_dict
         for case in cases:
             test_case_message = f"for input '{case.user_input}'"

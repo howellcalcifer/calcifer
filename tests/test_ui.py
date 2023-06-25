@@ -8,6 +8,7 @@ from engine.game import Game
 from ui.controllers import OutputControllerCommandLine, InputControllerCommandLine, OutputException
 from ui.text.parser import InvalidUserActionException, ParsedResult
 from world.item import Inventory, Item
+from world.location import Exit, Location
 from world.scene import Scene
 from world.verb import UserAction, Verb, VerbType, InventoryVerb
 
@@ -79,6 +80,7 @@ drop_verb = InventoryVerb(name="drop", type=VerbType.INVENTORY, description=None
                           source=CurrentContainerType.PROTAGONIST_ITEMS,
                           destination=CurrentContainerType.LOCATION_ITEMS)
 look_verb = Verb(name="look", type=VerbType.LOOK, description=None, intransitive=True, transitive=True)
+go_verb = Verb(name="go", type=VerbType.MOVE, description=None, intransitive=False, transitive=True)
 
 parsed_nod = ParsedResult(verb=nod_verb, object_ref_1=None)
 parsed_frown = ParsedResult(verb=frown_verb, object_ref_1=None)
@@ -90,6 +92,10 @@ parsed_look_sock = ParsedResult(verb=look_verb, object_ref_1="sock")
 
 rock_item = Item('rock')
 sock_item = Item('sock')
+
+parsed_go = ParsedResult(verb=go_verb, object_ref_1="east")
+east_place = Location("east_place", Inventory(), Scene("east place"))
+east_exit = Exit(direction="east", leads_to=east_place)
 
 
 class TestInputCommandLineUserAction(TestCase):
@@ -108,8 +114,9 @@ class TestInputCommandLineUserAction(TestCase):
         self.mock_parser = mock_text_parser_class.return_value
         self.inventory = Inventory()
         self.ground = Inventory()
-        self.visible = Inventory()
+        self.visible = {}
         self.game.container.side_effect = self._mock_create_current_container
+        self.exits = {}
 
     def _mock_create_current_container(self, typ: CurrentContainerType):
         if typ == CurrentContainerType.VISIBLE:
@@ -118,6 +125,8 @@ class TestInputCommandLineUserAction(TestCase):
             return self.ground
         if typ == CurrentContainerType.PROTAGONIST_ITEMS:
             return self.inventory
+        if typ == CurrentContainerType.LOCATION_EXITS:
+            return self.exits
 
     @patch('builtins.input')
     def test_await_user_action_parses_input(self, mock_input):
@@ -146,7 +155,7 @@ class TestInputCommandLineUserAction(TestCase):
 
     @patch('builtins.input')
     def test_permits_visible_object(self, _):
-        self.visible.add(rock_item)
+        self.visible['rock'] = rock_item
         self.mock_parser.parse_user_action.return_value = ParsedResult(look_verb, "rock")
         expected_action = UserAction(verb=look_verb, object=rock_item)
         self.controller.await_user_action()
@@ -154,7 +163,7 @@ class TestInputCommandLineUserAction(TestCase):
 
     @patch('builtins.input')
     def test_rejects_invisible_object(self, _):
-        self.visible.add(rock_item)
+        self.visible['rock'] = rock_item
         self.mock_parser.parse_user_action.side_effect = [ParsedResult(look_verb, "sock"),
                                                           ParsedResult(look_verb, "rock")]
         expected_action = UserAction(verb=look_verb, object=rock_item)
@@ -163,7 +172,7 @@ class TestInputCommandLineUserAction(TestCase):
 
     @patch('builtins.input')
     def test_permits_taking_ground_object(self, _):
-        self.visible.add(rock_item)
+        self.visible['rock'] = rock_item
         self.ground.add(rock_item)
         self.mock_parser.parse_user_action.side_effect = [ParsedResult(take_verb, "rock")]
         expected_action = UserAction(verb=take_verb, object=rock_item)
@@ -171,9 +180,37 @@ class TestInputCommandLineUserAction(TestCase):
         self.assertEqual(expected_action, self.controller.action)
 
     @patch('builtins.input')
+    def test_permits_moving_through_exit(self, _):
+        self.exits['east'] = east_exit
+        self.visible['east'] = east_exit
+        self.mock_parser.parse_user_action.side_effect = [ParsedResult(go_verb, "east")]
+        expected_action = UserAction(verb=go_verb, object=east_exit)
+        self.controller.await_user_action()
+        self.assertEqual(expected_action, self.controller.action)
+
+    @patch('builtins.input')
+    def test_forbids_taking_exit(self,_):
+        self.exits['east'] = east_exit
+        self.visible['east'] = east_exit
+        self.mock_parser.parse_user_action.side_effect = [ParsedResult(take_verb, "east"),
+                                                          ParsedResult(go_verb, "east")]
+        expected_action = UserAction(verb=go_verb, object=east_exit)
+        self.controller.await_user_action()
+        self.assertEqual(expected_action, self.controller.action)
+
+    @patch('builtins.input')
+    def test_forbids_moving_through_item(self,_):
+        self.visible['rock'] = rock_item
+        self.ground.add(rock_item)
+        self.mock_parser.parse_user_action.side_effect = [ParsedResult(go_verb, "rock"), ParsedResult(take_verb, "rock")]
+        expected_action = UserAction(verb=take_verb, object=rock_item)
+        self.controller.await_user_action()
+        self.assertEqual(expected_action, self.controller.action)
+
+    @patch('builtins.input')
     def test_rejects_taking_inventory_object(self, _):
-        self.visible.add(rock_item)
-        self.visible.add(sock_item)
+        self.visible['rock'] = rock_item
+        self.visible['sock'] = sock_item
         self.inventory.add(rock_item)
         self.ground.add(sock_item)
         self.mock_parser.parse_user_action.side_effect = [ParsedResult(take_verb, "rock"),
@@ -184,8 +221,8 @@ class TestInputCommandLineUserAction(TestCase):
 
     @patch('builtins.input')
     def test_rejects_dropping_non_inventory_object(self, _):
-        self.visible.add(rock_item)
-        self.visible.add(sock_item)
+        self.visible['rock'] = rock_item
+        self.visible['sock'] = sock_item
         self.inventory.add(rock_item)
         self.mock_parser.parse_user_action.side_effect = [ParsedResult(drop_verb, "sock"),
                                                           ParsedResult(drop_verb, "rock")]

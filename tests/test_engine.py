@@ -8,7 +8,7 @@ from engine.input_game_observer import InputGameObserver
 from ui.controllers import InputController, OutputController
 from world.character import Character, Gesture
 from world.item import Inventory, Item
-from world.location import Location
+from world.location import Location, Exit
 from world.scene import Scene
 from world.verb import Verb, VerbType, InventoryVerb, UserAction
 
@@ -45,6 +45,13 @@ class TestCurrentContainers(TestCase):
         self.assertTrue("sock" in container)
         self.assertTrue("rock" in container)
         self.assertFalse("lock" in container)
+
+    def test_container_exits_contains(self):
+        self.location.exits['east'] = Exit('east', Location('east_place', inventory=Inventory(),
+                                                            description_init=Scene("East place")))
+        container = self.container_factory.create(CurrentContainerType.LOCATION_EXITS)
+        self.assertTrue("east" in container)
+        self.assertFalse("west" in container)
 
 
 class TestInputGameObserver(TestCase):
@@ -124,6 +131,14 @@ class TestInputGameObserver(TestCase):
         self.controller.action = UserAction(self.bow_verb)
         self.observer.update(self.controller)
         self.assertEqual(self.game.protagonist.gesture, Gesture(name="bow", description=Scene("You bow gracefully.")))
+
+    def test_move_on_move_action(self):
+        go_verb = Verb("go", VerbType.MOVE, description=None, transitive=True, intransitive=False)
+        east_place = Location("east place", Inventory(), Scene("A place in the east"))
+        east_exit = Exit("east", east_place)
+        self.controller.action = UserAction(go_verb, east_exit)
+        self.observer.update(self.controller)
+        self.assertEqual(self.game.protagonist.location, east_place)
 
 
 class TestGameOutputObserver(TestCase):

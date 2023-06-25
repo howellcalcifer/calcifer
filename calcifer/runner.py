@@ -8,12 +8,12 @@ from ui.controllers import OutputControllerCommandLine, InputControllerCommandLi
 from world.mappings import ItemMapping, CharacterMapping, LocationMapping, VerbMapping
 
 
-def main():
-    verbs = VerbMapping.from_yaml("data", "verbs.yaml")
+def main(data_module: str = 'data'):
+    verbs = VerbMapping.from_yaml(data_module, "verbs.yaml")
 
-    items = ItemMapping.from_yaml("data", "items.yaml")
-    characters = CharacterMapping.from_yaml("data", "characters.yaml", items)
-    LocationMapping.from_yaml("data", "locations.yaml", items, characters)
+    items = ItemMapping.from_yaml(data_module, "items.yaml")
+    characters = CharacterMapping.from_yaml(data_module, "characters.yaml", items)
+    LocationMapping.from_yaml(data_module, "locations.yaml", items, characters)
     protagonist_name = 'calcifer'
     protagonist = characters[protagonist_name]
     game = Game()

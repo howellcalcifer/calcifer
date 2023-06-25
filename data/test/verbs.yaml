@@ -4,6 +4,9 @@ smile:
     - grin
   intransitive: true
   transitive: false
+grimace:
+  type: gesture
+  intransitive: true
 bow:
   type: gesture
   description: You bow gracefully.
@@ -19,10 +22,8 @@ abracadabra:
     - alakazam
   intransitive: true
   transitive: false
-east:
+go:
   type: move
-  aliases:
-    - e
   transitive: true
   intransitive: false
 take:
@@ -37,3 +38,6 @@ drop:
   type: inventory
   source: inventory
   destination: ground
+quit:
+  type: quit
+  intransitive: true

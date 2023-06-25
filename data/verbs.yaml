@@ -18,11 +18,10 @@ abracadabra:
   aliases:
     - alakazam
   intransitive: true
-east:
+go:
   type: move
-  aliases:
-    - e
-  intransitive: true
+  intransitive: false
+  transitive: true
 quit:
   type: quit
   intransitive: true
