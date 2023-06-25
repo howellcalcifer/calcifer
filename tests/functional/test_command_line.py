@@ -23,7 +23,7 @@ class Scenario:
 
 
 def test_command_line(capsys):
-    test_scenarios = ['takedrop', 'move']
+    test_scenarios = ['takedrop', 'object_permanence']
     for scenario_name in test_scenarios:
 
         scenario = Scenario.get(scenario_name)

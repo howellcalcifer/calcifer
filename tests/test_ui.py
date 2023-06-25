@@ -7,6 +7,7 @@ from engine.container_factory import CurrentContainerType
 from engine.game import Game
 from ui.controllers import OutputControllerCommandLine, InputControllerCommandLine, OutputException
 from ui.text.parser import InvalidUserActionException, ParsedResult
+from world.character import Character
 from world.item import Inventory, Item
 from world.location import Exit, Location
 from world.scene import Scene
@@ -110,6 +111,9 @@ class TestInputCommandLineUserAction(TestCase):
     def setUp(self, mock_text_parser_class) -> None:
         verbs = {'nod': nod_verb, 'frown': frown_verb, 'take': take_verb}
         self.game = Mock(Game)
+        self.location = Location("here", Inventory(), Scene("it is here"))
+        self.game.protagonist = Mock(Character)
+        self.game.protagonist.location = self.location
         self.controller = InputControllerCommandLine(verbs, self.game)
         self.mock_parser = mock_text_parser_class.return_value
         self.inventory = Inventory()
@@ -229,3 +233,12 @@ class TestInputCommandLineUserAction(TestCase):
         expected_action = UserAction(verb=drop_verb, object=rock_item)
         self.controller.await_user_action()
         self.assertEqual(expected_action, self.controller.action)
+
+    @patch('builtins.input')
+    def test_defaults_look_to_location(self,_):
+        self.mock_parser.parse_user_action.side_effect = [ParsedResult(look_verb)]
+        expected_action = UserAction(verb=look_verb, object=self.location)
+        self.controller.await_user_action()
+        self.assertEqual(expected_action, self.controller.action)
+
+

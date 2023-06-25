@@ -28,7 +28,7 @@ class Location:
     @property
     def description(self) -> Scene:
         item_text = ",".join(f"{self._item_article(i > 0, item)} {item}" for i, item in enumerate(self.inventory))
-        return Scene(f"{self._description.text}\n\n{item_text} is here." if item_text else self._description.text)
+        return Scene(f"{self._description.text}\n{item_text} is here." if item_text else self._description.text)
 
     @staticmethod
     def _item_article(capitalise: bool, _):

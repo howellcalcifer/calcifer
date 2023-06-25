@@ -1,7 +1,8 @@
 !!python/object/new:world.mappings.VerbMapping
 dictitems:
   abracadabra: !!python/object:world.verb.Verb
-    description: null
+    description: !!python/object:world.scene.Scene
+      text: You abracadabra.
     intransitive: true
     name: abracadabra
     transitive: false
@@ -18,7 +19,8 @@ dictitems:
     - *id001
     - GESTURE
   drop: !!python/object:world.verb.InventoryVerb
-    description: null
+    description: !!python/object:world.scene.Scene
+      text: You drop.
     destination: &id005 !!python/object/apply:builtins.getattr
     - &id002 !!python/name:engine.container_factory.CurrentContainerType ''
     - LOCATION_ITEMS
@@ -32,7 +34,8 @@ dictitems:
     - *id001
     - INVENTORY
   go: !!python/object:world.verb.Verb
-    description: null
+    description: !!python/object:world.scene.Scene
+      text: You go.
     intransitive: false
     name: go
     transitive: true
@@ -40,13 +43,24 @@ dictitems:
     - *id001
     - MOVE
   grimace: !!python/object:world.verb.Verb
-    description: null
+    description: !!python/object:world.scene.Scene
+      text: You grimace.
     intransitive: true
     name: grimace
     transitive: null
     type: *id003
+  look: !!python/object:world.verb.Verb
+    description: !!python/object:world.scene.Scene
+      text: You look.
+    intransitive: true
+    name: look
+    transitive: true
+    type: !!python/object/apply:builtins.getattr
+    - *id001
+    - LOOK
   quit: !!python/object:world.verb.Verb
-    description: null
+    description: !!python/object:world.scene.Scene
+      text: You quit.
     intransitive: true
     name: quit
     transitive: null
@@ -54,7 +68,8 @@ dictitems:
     - *id001
     - QUIT
   sit: !!python/object:world.verb.Verb
-    description: null
+    description: !!python/object:world.scene.Scene
+      text: You sit.
     intransitive: true
     name: sit
     transitive: false
@@ -62,13 +77,15 @@ dictitems:
     - *id001
     - POSTURE
   smile: !!python/object:world.verb.Verb
-    description: null
+    description: !!python/object:world.scene.Scene
+      text: You smile.
     intransitive: true
     name: smile
     transitive: false
     type: *id003
   take: !!python/object:world.verb.InventoryVerb
-    description: null
+    description: !!python/object:world.scene.Scene
+      text: You take.
     destination: *id004
     intransitive: false
     name: take

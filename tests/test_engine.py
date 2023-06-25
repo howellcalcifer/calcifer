@@ -1,12 +1,12 @@
 from unittest import TestCase
-from unittest.mock import Mock
+from unittest.mock import Mock, call
 
 from engine.container_factory import CurrentContainerFactory, CurrentContainerType
 from engine.game import Game
 from engine.game_output_observer import GameOutputObserver
 from engine.input_game_observer import InputGameObserver
 from ui.controllers import InputController, OutputController
-from world.character import Character, Gesture
+from world.character import Character
 from world.item import Inventory, Item
 from world.location import Location, Exit
 from world.scene import Scene
@@ -110,28 +110,6 @@ class TestInputGameObserver(TestCase):
         self.game.protagonist.inventory.remove.assert_called_with(self.rock_item)
         self.game.protagonist.location.inventory.add.assert_called_with(self.rock_item)
 
-    def test_looks_around_on_intransitive_look_action(self):
-        self.controller.action = UserAction(self.look_verb)
-        self.observer.update(self.controller)
-
-        self.assertEqual(self.game.protagonist.looking_at, self.game.protagonist.location)
-
-    def test_looks_at_object_on_transitive_look_action(self):
-        self.controller.action = UserAction(self.look_verb, self.rock_item)
-        self.observer.update(self.controller)
-
-        self.assertEqual(self.game.protagonist.looking_at, self.rock_item)
-
-    def test_nods_on_nod_action(self):
-        self.controller.action = UserAction(self.nod_verb)
-        self.observer.update(self.controller)
-        self.assertEqual(self.game.protagonist.gesture, Gesture(name="nod", description=Scene("You nod.")))
-
-    def test_bow_on_nod_action(self):
-        self.controller.action = UserAction(self.bow_verb)
-        self.observer.update(self.controller)
-        self.assertEqual(self.game.protagonist.gesture, Gesture(name="bow", description=Scene("You bow gracefully.")))
-
     def test_move_on_move_action(self):
         go_verb = Verb("go", VerbType.MOVE, description=None, transitive=True, intransitive=False)
         east_place = Location("east place", Inventory(), Scene("A place in the east"))
@@ -139,6 +117,11 @@ class TestInputGameObserver(TestCase):
         self.controller.action = UserAction(go_verb, east_exit)
         self.observer.update(self.controller)
         self.assertEqual(self.game.protagonist.location, east_place)
+
+    def test_set_latest_action(self):
+        self.controller.action = UserAction(self.drop_verb, self.rock_item)
+        self.observer.update(self.controller)
+        self.assertEqual(self.game.latest_action, self.controller.action)
 
 
 class TestGameOutputObserver(TestCase):
@@ -161,3 +144,42 @@ class TestGameOutputObserver(TestCase):
         self.game.protagonist.description = Scene("You seem nice.")
         self.observer.update(self.game)
         self.output.show_scene.assert_called_with(Scene("You seem nice."))
+
+    def test_shows_location(self):
+        look_verb = Verb("look", VerbType.LOOK, None, True, True)
+        location_description = Scene("This is a place")
+        location = Location("place", Inventory(), location_description)
+        look_action = UserAction(look_verb, location)
+        self.game.latest_action = look_action
+        self.game.changed_observed_attribute = 'latest_action'
+        self.observer.update(self.game)
+        self.output.show_scene.assert_called_with(location_description)
+
+    def test_shows_gesture(self):
+        nod_verb = Verb("nod", VerbType.GESTURE, Scene("You nod."), True, False)
+        nod_action = UserAction(nod_verb)
+        self.game.latest_action = nod_action
+        self.game.changed_observed_attribute = 'latest_action'
+        self.observer.update(self.game)
+        self.output.show_scene.assert_called_with(Scene("You nod."))
+
+    def test_shows_take_action(self):
+        take_verb = Verb("take", VerbType.INVENTORY, None, False, True)
+        rock_item = Item("rock")
+        take_action = UserAction(take_verb, rock_item)
+        self.game.latest_action = take_action
+        self.game.changed_observed_attribute = 'latest_action'
+        self.observer.update(self.game)
+        self.output.show_scene.assert_called_with(Scene("You take the rock."))
+
+    def test_shows_move(self):
+        move_verb = Verb("go", VerbType.MOVE, None, False, True)
+        east_place_description = Scene("The place to the east")
+        east_place = Location("east place", Inventory(), east_place_description)
+        east_exit = Exit("east", east_place)
+        move_action = UserAction(move_verb, east_exit)
+        self.game.latest_action = move_action
+        self.game.changed_observed_attribute = 'latest_action'
+        self.observer.update(self.game)
+        expected_calls = [call(Scene("You go east.\n")), call(east_place_description)]
+        self.output.show_scene.assert_has_calls(expected_calls)

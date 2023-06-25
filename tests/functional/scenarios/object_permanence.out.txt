@@ -1,34 +1,19 @@
 You take the rock.
-
-What would you like to do?
 You go east.
-
 A place that serves beer.
-
-What would you like to do?
 You drop the rock.
-
 A place that serves beer.
-
 A rock is here.
-
-What would you like to do?
 You go west.
-
 A library in a castle.
-
-What would you like to do?
+You go east.
+A place that serves beer.
+A rock is here.
+You take the rock.
+You go west.
+A library in a castle.
 You go south.
-
 A clearing in a forest.
-
-What would you like to do?
 You go north.
-
 A library in a castle.
-
-What would you like to do?
-You can't go north from here.
-
-What would you like to do?
 Goodbye for now.

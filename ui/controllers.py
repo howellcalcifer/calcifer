@@ -61,8 +61,6 @@ class InputControllerCommandLine(InputController):
     action = ObservedAttribute('action')
 
     def await_user_action(self):
-        print()
-        print("What would you like to do?")
         while True:
             try:
                 parsed = self._parser.parse_user_action(input())
@@ -71,7 +69,10 @@ class InputControllerCommandLine(InputController):
                 continue
 
             if parsed.object_ref_1 is None:
-                self.action = UserAction(verb=parsed.verb)
+                if parsed.verb.type != VerbType.LOOK:
+                    self.action = UserAction(verb=parsed.verb)
+                else:
+                    self.action = UserAction(verb=parsed.verb, object=self._game.protagonist.location)
                 return
 
             visible_objects = self._game.container(CurrentContainerType.VISIBLE)

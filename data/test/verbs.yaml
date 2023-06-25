@@ -38,6 +38,10 @@ drop:
   type: inventory
   source: inventory
   destination: ground
+look:
+  type: look
+  intransitive: true
+  transitive: true
 quit:
   type: quit
   intransitive: true

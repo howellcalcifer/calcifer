@@ -44,4 +44,4 @@ class TestWorld(TestCase):
         inventory = Inventory()
         inventory.add(Item("rock"))
         location = Location("test", inventory, input_scene)
-        self.assertEqual("A scene.\n\nA rock is here.", location.description.text)
+        self.assertEqual("A scene.\nA rock is here.", location.description.text)

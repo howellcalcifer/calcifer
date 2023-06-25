@@ -1,8 +1,6 @@
 from engine.game import Game
 from pattern.observer import Observer
 from ui.controllers import InputController
-from world.character import Gesture
-from world.scene import Scene
 from world.verb import VerbType
 
 
@@ -15,17 +13,12 @@ class InputGameObserver(Observer):
         action = controller.action
         if action.verb.type == VerbType.QUIT:
             self._game.running = False
-        if action.verb.type == VerbType.INVENTORY:
+        elif action.verb.type == VerbType.INVENTORY:
             source = self._game.container(action.verb.source)
             destination = self._game.container(action.verb.destination)
             source.remove(action.object)
             destination.add(action.object)
-        if action.verb.type == VerbType.LOOK:
-            self._game.protagonist.looking_at = action.object if action.object else self._game.protagonist.location
-        if action.verb.type == VerbType.GESTURE:
-            self._game.protagonist.gesture = Gesture(name=action.verb.name,
-                                                     description=(
-                                                         action.verb.description if action.verb.description else
-                                                         Scene(f"You {action.verb.name}.")))
-        if action.verb.type == VerbType.MOVE:
+        elif action.verb.type == VerbType.MOVE:
             self._game.protagonist.location = action.object.leads_to
+        self._game.latest_action = action
+
