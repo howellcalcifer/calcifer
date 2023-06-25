@@ -10,9 +10,42 @@ dictitems:
         '
     _display_name: Calcifer
     _gesture: null
-    _location: !!python/object:world.location.Location
+    _location: &id001 !!python/object:world.location.Location
       _description: !!python/object:world.scene.Scene
         text: A library in a castle.
+      exits:
+        east: !!python/object:world.location.Exit
+          direction: east
+          leads_to: &id002 !!python/object:world.location.Location
+            _description: !!python/object:world.scene.Scene
+              text: A place that serves beer.
+            exits:
+              west: !!python/object:world.location.Exit
+                direction: west
+                leads_to: *id001
+            inventory: !!python/object:world.item.Inventory
+              _items: {}
+              _subscribers: []
+              changed_observed_attribute: null
+              item_incoming: null
+              item_outgoing: null
+            name: pub
+        south: !!python/object:world.location.Exit
+          direction: south
+          leads_to: !!python/object:world.location.Location
+            _description: !!python/object:world.scene.Scene
+              text: A clearing in a forest.
+            exits:
+              north: !!python/object:world.location.Exit
+                direction: north
+                leads_to: *id001
+            inventory: !!python/object:world.item.Inventory
+              _items: {}
+              _subscribers: []
+              changed_observed_attribute: null
+              item_incoming: null
+              item_outgoing: null
+            name: clearing
       inventory: !!python/object:world.item.Inventory
         _items:
           rock: !!python/object:world.item.Item
@@ -48,16 +81,7 @@ dictitems:
     _description: null
     _display_name: null
     _gesture: null
-    _location: !!python/object:world.location.Location
-      _description: !!python/object:world.scene.Scene
-        text: A place that serves beer.
-      inventory: !!python/object:world.item.Inventory
-        _items: {}
-        _subscribers: []
-        changed_observed_attribute: null
-        item_incoming: null
-        item_outgoing: null
-      name: pub
+    _location: *id002
     _looking_at: null
     _name: howell
     _subscribers: []

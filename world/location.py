@@ -1,7 +1,18 @@
+from __future__ import annotations
 import dataclasses
 
 from world.item import Inventory
 from world.scene import Scene
+
+
+class Direction(str):
+    pass
+
+
+@dataclasses.dataclass
+class Exit:
+    direction: Direction
+    leads_to: Location
 
 
 @dataclasses.dataclass
@@ -9,6 +20,7 @@ class Location:
     name: str
     inventory: Inventory
     description_init: dataclasses.InitVar[Scene]
+    exits: dict[Direction, Exit] = dataclasses.field(default_factory=dict)
 
     def __post_init__(self, description_init: Scene):
         self._description = description_init
@@ -28,5 +40,3 @@ class Location:
 
     def __hash__(self):
         return hash(self.name)
-
-

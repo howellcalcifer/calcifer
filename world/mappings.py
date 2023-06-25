@@ -7,7 +7,7 @@ from yaml import load, Loader
 from engine.container_factory import CurrentContainerType
 from world.character import Character
 from world.item import Inventory, Item
-from world.location import Location
+from world.location import Location, Exit
 from world.scene import Scene
 from world.verb import Verb, VerbType
 
@@ -15,7 +15,8 @@ from world.verb import Verb, VerbType
 class LocationMapping(dict[str, Location]):
 
     @classmethod
-    def from_yaml(cls, package: str, resource: str, items: ItemMapping, characters: CharacterMapping) -> LocationMapping:
+    def from_yaml(cls, package: str, resource: str, items: ItemMapping,
+                  characters: CharacterMapping) -> LocationMapping:
         with (files(package) / resource).open('r') as text_io:
             raw_struct = load(text_io, Loader)
         mapping = cls()
@@ -29,6 +30,8 @@ class LocationMapping(dict[str, Location]):
                 pass
             mapping[name] = Location(*args, **kwargs)
             cls.set_character_locations(properties, characters, mapping[name])
+        for name, properties in raw_struct.items():
+            mapping[name].exits = cls.load_exits(properties, mapping)
         return mapping
 
     @staticmethod
@@ -38,6 +41,14 @@ class LocationMapping(dict[str, Location]):
             for item_name in yaml_character['inventory']:
                 inventory.add(items[item_name])
         return inventory
+
+    @staticmethod
+    def load_exits(yaml_location, locations):
+        exits = {}
+        if 'exits' in yaml_location:
+            for exit in yaml_location['exits']:
+                exits[exit['direction']] = Exit(direction=exit['direction'], leads_to=locations[exit['location']])
+        return exits
 
     @staticmethod
     def set_character_locations(yaml_location, characters, location):

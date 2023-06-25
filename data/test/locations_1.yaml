@@ -5,19 +5,19 @@ library:
   characters:
     - calcifer
   exits:
-    east:
+    - direction: east
       location: pub
-    south:
+    - direction: south
       location: clearing
 pub:
   description: "A place that serves beer."
   characters:
     - howell
   exits:
-    west:
+    - direction: west
       location: library
 clearing:
   description: "A clearing in a forest."
   exits:
-    north:
+    - direction: north
       location: library
