@@ -23,23 +23,23 @@ class ActionResolver:
             obj = visible_objects[action.object_ref_1]
         except KeyError:
             if action.verb.type == VerbType.MOVE:
-                raise InvalidUnresolvedAction(f"You can't go that way.")
+                raise InvalidUnresolvedAction("You can't go that way.") from None
             else:
-                raise InvalidUnresolvedAction(f"You can't see any {action.object_ref_1}.")
+                raise InvalidUnresolvedAction(f"You can't see any {action.object_ref_1}.") from None
 
         if action.verb.type == VerbType.INVENTORY:
             source = self.game.container(action.verb.source)
             destination = self.game.container(action.verb.destination)
             try:
                 if obj.name not in source or obj.name in destination:
-                    raise InvalidUnresolvedAction(f"You can't {action.verb.name} that.")
+                    raise InvalidUnresolvedAction(f"You can't {action.verb.name} that.") from None
             except AttributeError:
-                raise InvalidUnresolvedAction(f"You can't {action.verb.name} that.")
+                raise InvalidUnresolvedAction(f"You can't {action.verb.name} that.") from None
         if action.verb.type == VerbType.MOVE:
             try:
                 if obj.direction not in self.game.container(CurrentContainerType.LOCATION_EXITS):
                     raise InvalidUnresolvedAction(f"You can't go {obj.direction}")
             except AttributeError:
-                raise InvalidUnresolvedAction("You can't go there.")
+                raise InvalidUnresolvedAction("You can't go there.") from None
 
         return UserAction(verb=action.verb, object=obj)

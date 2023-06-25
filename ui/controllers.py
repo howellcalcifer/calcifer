@@ -1,8 +1,7 @@
 import abc
 import textwrap
 
-from engine.action import UserAction, UnresolvedAction
-from engine.action_resolver import ActionResolver, InvalidUnresolvedAction
+from engine.action import UnresolvedAction
 from engine.game import Game
 from pattern.observer import Subject, ObservedAttribute
 from ui.text.parser import TextParser, InvalidUserActionException

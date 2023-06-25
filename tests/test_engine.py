@@ -4,17 +4,14 @@ from unittest.mock import Mock, call, patch
 
 from engine.action_resolver import ActionResolver, InvalidUnresolvedAction
 from engine.container_factory import CurrentContainerFactory, CurrentContainerType
-from engine.game import Game
 from engine.game_output_observer import GameOutputObserver
 from engine.input_game_observer import InputGameObserver
 from tests.harness.harness import TestGameCase
-from tests.harness.verbs import verbs
 from ui.controllers import InputController, OutputController
 from world.character import Character
 from world.item import Inventory, Item
 from world.location import Location, Exit
 from world.scene import Scene
-from world.verb import Verb, VerbType, InventoryVerb
 from engine.action import UserAction, UnresolvedAction
 
 

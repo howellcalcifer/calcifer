@@ -9,7 +9,7 @@ from tests.harness.locations import locations
 from tests.test_parser import verbs
 from world.character import Character
 from world.item import Inventory, Item
-from world.location import Location, Exit
+from world.location import Exit
 
 
 class TestGameCase(TestCase, abc.ABC):
