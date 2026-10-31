@@ -13,6 +13,7 @@ pytest = "*"
 pytest-cov = "*"
 mypy = "*"
 types-PyYAML = "*"
+pre-commit = "*"
 
 [requires]
 python_version = "3.11"
