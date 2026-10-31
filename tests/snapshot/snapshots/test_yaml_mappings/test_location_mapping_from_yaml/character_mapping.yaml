@@ -15,25 +15,29 @@ dictitems:
         text: A library in a castle.
       exits:
         east: !!python/object:world.location.Exit
-          direction: east
+          direction: !!python/object/apply:world.location.Direction
+          - east
           leads_to: &id002 !!python/object:world.location.Location
             _description: !!python/object:world.scene.Scene
               text: A place that serves beer.
             exits:
               west: !!python/object:world.location.Exit
-                direction: west
+                direction: !!python/object/apply:world.location.Direction
+                - west
                 leads_to: *id001
             inventory: !!python/object:world.item.Inventory
               _items: {}
             name: pub
         south: !!python/object:world.location.Exit
-          direction: south
+          direction: !!python/object/apply:world.location.Direction
+          - south
           leads_to: !!python/object:world.location.Location
             _description: !!python/object:world.scene.Scene
               text: A clearing in a forest.
             exits:
               north: !!python/object:world.location.Exit
-                direction: north
+                direction: !!python/object/apply:world.location.Direction
+                - north
                 leads_to: *id001
             inventory: !!python/object:world.item.Inventory
               _items: {}

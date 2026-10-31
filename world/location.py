@@ -1,12 +1,36 @@
 from __future__ import annotations
 import dataclasses
+from enum import StrEnum
 
 from world.item import Inventory
 from world.scene import Scene
 
 
-class Direction(str):
-    pass
+class Direction(StrEnum):
+    shortcut: str
+
+    def __new__(cls, value: str, shortcut: str = ""):
+        direction = str.__new__(cls, value)
+        direction._value_ = value
+        direction.shortcut = shortcut
+        return direction
+
+    NORTH = ("north", "n")
+    SOUTH = ("south", "s")
+    EAST = ("east", "e")
+    WEST = ("west", "w")
+    NORTHWEST = ("northwest", "nw")
+    NORTHEAST = ("northeast", "ne")
+    SOUTHWEST = ("southwest", "sw")
+    SOUTHEAST = ("southeast", "se")
+
+    @classmethod
+    def from_shortcut(cls, shortcut: str) -> Direction | None:
+        return next((direction for direction in cls if direction.shortcut == shortcut), None)
+
+    @classmethod
+    def from_name(cls, name: str) -> Direction | None:
+        return next((direction for direction in cls if direction.value == name), None)
 
 
 @dataclasses.dataclass
@@ -14,9 +38,12 @@ class Exit:
     direction: Direction
     leads_to: Location
 
+    def __post_init__(self) -> None:
+        self.direction = Direction(self.direction)
+
     @property
     def description(self) -> Scene:
-        return Scene(f"The way {self.direction} leads to {self.leads_to.name}.")
+        return Scene(f"The way {self.direction.value} leads to {self.leads_to.name}.")
 
 
 @dataclasses.dataclass

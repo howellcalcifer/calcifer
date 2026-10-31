@@ -6,6 +6,9 @@
 
 `./run`
 
+Move with `go <direction>` or use `n`, `s`, `e`, `w`, `nw`, `ne`, `sw`, and `se` for the
+corresponding cardinal and diagonal directions.
+
 ## Local developemt
 
 ### Prerequisites

@@ -8,7 +8,7 @@ from yaml import load, Loader
 from engine.container_factory import CurrentContainerType
 from world.character import Character
 from world.item import Inventory, Item
-from world.location import Location, Exit
+from world.location import Direction, Location, Exit
 from world.scene import Scene
 from world.verb import Verb, VerbType
 
@@ -43,8 +43,8 @@ class LocationMapping(dict[str, Location]):
         exits = {}
         if 'exits' in yaml_location:
             for exit in yaml_location['exits']:
-                direction = exit['direction']
-                exits[direction] = Exit(direction=direction, leads_to=locations[exit['location']])
+                direction = Direction(exit['direction'])
+                exits[direction.value] = Exit(direction=direction, leads_to=locations[exit['location']])
         return exits
 
     @staticmethod

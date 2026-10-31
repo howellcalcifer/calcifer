@@ -5,7 +5,7 @@ from unittest import TestCase
 from engine.game import Game
 from world.character import Describable, Character, Gesture
 from world.item import Item, Inventory
-from world.location import Exit, Location
+from world.location import Direction, Exit, Location
 from world.scene import Scene
 from world.verb import Verb
 from world.mappings import VerbMapping
@@ -24,6 +24,15 @@ class VerbDictTestCase:
 
 
 class TestWorld(TestCase):
+    def test_direction_defines_shortcut_and_exit_normalizes_direction(self):
+        location = Location("test", Inventory(), Scene("A scene."))
+        exit = Exit("east", location)
+
+        self.assertIs(Direction.EAST, exit.direction)
+        self.assertEqual("e", exit.direction.shortcut)
+        self.assertIs(Direction.EAST, Direction.from_shortcut("e"))
+        self.assertEqual("The way east leads to test.", exit.description.text)
+
     def test_describable_issubclass_behaviour(self):
         cases = [DescribableTestCase(Item, True), DescribableTestCase(Character, True),
                  DescribableTestCase(Location, True),
