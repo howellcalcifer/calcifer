@@ -10,33 +10,35 @@
 
 ### Prerequisites
 
+Install uv, then install the Python version pinned by `.python-version` and the project dependencies:
+
 ```
-pip install --user pipenv
-pipenv install --dev
+uv python install
+uv sync --locked
 ```
 
 ### Run tests
 
-`pipenv run pytest`
+`uv run pytest`
 
 ### Type check
 
-`pipenv run mypy`
+`uv run mypy`
 
 ### Git hooks
 
 Install the Ruff, mypy, and pytest pre-commit hooks:
 
-`pipenv run pre-commit install`
+`uv run pre-commit install`
 
 To run the hooks against every file:
 
-`pipenv run pre-commit run --all-files`
+`uv run pre-commit run --all-files`
 
 To generate an HTML coverage report:
 
-`pipenv run pytest --cov --cov-report html:coverage_report`
+`uv run pytest --cov --cov-report html:coverage_report`
 
 To update snapshot files:
 
-`pipenv run pytest --update-snapshots`
+`uv run pytest --update-snapshots`

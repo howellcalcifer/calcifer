@@ -56,6 +56,6 @@ The controller interfaces are intended to keep game logic independent of the inp
 
 ## Tests and decisions
 
-Tests are divided among engine, parser, runner, UI, world, YAML-mapping snapshots, and command-line functional scenarios. Run them with `pipenv run pytest` (see [`README.md`](README.md)).
+Tests are divided among engine, parser, runner, UI, world, YAML-mapping snapshots, and command-line functional scenarios. Run them with `uv run pytest` (see [`README.md`](README.md)).
 
 The accepted architectural decisions are documented in [`doc/adr/`](doc/adr/). In particular, ADRs 2 through 6 describe the controller boundary, observer flow, YAML-loaded world objects, and action validation in the input-game observer.

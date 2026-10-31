@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-from calcifer.runner import main
+#!/usr/bin/env sh
+exec uv run --locked python -m calcifer.runner "$@"
 
 if __name__ == '__main__':
     main()

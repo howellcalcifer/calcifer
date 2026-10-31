@@ -26,3 +26,7 @@ def main(data_module: str = 'data'):
 
     game.start(protagonist)
     input_controller.start()
+
+
+if __name__ == "__main__":
+    main()

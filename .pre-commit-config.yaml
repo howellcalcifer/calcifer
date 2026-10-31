@@ -3,18 +3,18 @@ repos:
     hooks:
       - id: ruff
         name: Ruff
-        entry: pipenv run ruff check
+        entry: .venv/bin/ruff check
         language: system
         types: [python]
       - id: mypy
         name: mypy
-        entry: pipenv run mypy
+        entry: .venv/bin/mypy
         language: system
         pass_filenames: false
         always_run: true
       - id: pytest
         name: pytest
-        entry: pipenv run pytest -q
+        entry: .venv/bin/pytest -q
         language: system
         pass_filenames: false
         always_run: true

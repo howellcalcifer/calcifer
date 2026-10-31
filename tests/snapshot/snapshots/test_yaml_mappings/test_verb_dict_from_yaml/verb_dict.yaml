@@ -6,89 +6,80 @@ dictitems:
     intransitive: true
     name: abracadabra
     transitive: false
-    type: !!python/object/apply:builtins.getattr
-    - &id001 !!python/name:world.verb.VerbType ''
-    - MAGIC
+    type: !!python/object/apply:world.verb.VerbType
+    - magic
   bow: !!python/object:world.verb.Verb
     description: !!python/object:world.scene.Scene
       text: You bow gracefully.
     intransitive: true
     name: bow
     transitive: false
-    type: &id003 !!python/object/apply:builtins.getattr
-    - *id001
-    - GESTURE
+    type: &id001 !!python/object/apply:world.verb.VerbType
+    - gesture
   drop: !!python/object:world.verb.InventoryVerb
     description: !!python/object:world.scene.Scene
       text: You drop.
-    destination: &id005 !!python/object/apply:builtins.getattr
-    - &id002 !!python/name:engine.container_factory.CurrentContainerType ''
-    - LOCATION_ITEMS
+    destination: &id003 !!python/object/apply:engine.container_factory.CurrentContainerType
+    - ground
     intransitive: false
     name: drop
-    source: &id004 !!python/object/apply:builtins.getattr
-    - *id002
-    - PROTAGONIST_ITEMS
+    source: &id002 !!python/object/apply:engine.container_factory.CurrentContainerType
+    - inventory
     transitive: true
-    type: &id006 !!python/object/apply:builtins.getattr
-    - *id001
-    - INVENTORY
+    type: &id004 !!python/object/apply:world.verb.VerbType
+    - inventory
   go: !!python/object:world.verb.Verb
     description: !!python/object:world.scene.Scene
       text: You go.
     intransitive: false
     name: go
     transitive: true
-    type: !!python/object/apply:builtins.getattr
-    - *id001
-    - MOVE
+    type: !!python/object/apply:world.verb.VerbType
+    - move
   grimace: !!python/object:world.verb.Verb
     description: !!python/object:world.scene.Scene
       text: You grimace.
     intransitive: true
     name: grimace
     transitive: null
-    type: *id003
+    type: *id001
   look: !!python/object:world.verb.Verb
     description: !!python/object:world.scene.Scene
       text: You look.
     intransitive: true
     name: look
     transitive: true
-    type: !!python/object/apply:builtins.getattr
-    - *id001
-    - LOOK
+    type: !!python/object/apply:world.verb.VerbType
+    - look
   quit: !!python/object:world.verb.Verb
     description: !!python/object:world.scene.Scene
       text: You quit.
     intransitive: true
     name: quit
     transitive: null
-    type: !!python/object/apply:builtins.getattr
-    - *id001
-    - QUIT
+    type: !!python/object/apply:world.verb.VerbType
+    - quit
   sit: !!python/object:world.verb.Verb
     description: !!python/object:world.scene.Scene
       text: You sit.
     intransitive: true
     name: sit
     transitive: false
-    type: !!python/object/apply:builtins.getattr
-    - *id001
-    - POSTURE
+    type: !!python/object/apply:world.verb.VerbType
+    - posture
   smile: !!python/object:world.verb.Verb
     description: !!python/object:world.scene.Scene
       text: You smile.
     intransitive: true
     name: smile
     transitive: false
-    type: *id003
+    type: *id001
   take: !!python/object:world.verb.InventoryVerb
     description: !!python/object:world.scene.Scene
       text: You take.
-    destination: *id004
+    destination: *id002
     intransitive: false
     name: take
-    source: *id005
+    source: *id003
     transitive: true
-    type: *id006
+    type: *id004
