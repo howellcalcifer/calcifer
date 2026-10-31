@@ -1,20 +1,27 @@
 You take the rock.
 You go east.
 A place that serves beer.
+Exits: west
 You drop the rock.
 A place that serves beer.
 A rock is here.
+Exits: west
 You go west.
 A library in a castle.
+Exits: east, south
 You go east.
 A place that serves beer.
 A rock is here.
+Exits: west
 You take the rock.
 You go west.
 A library in a castle.
+Exits: east, south
 You go south.
 A clearing in a forest.
+Exits: north
 You go north.
 A library in a castle.
+Exits: east, south
 You can't go that way.
 Goodbye for now.

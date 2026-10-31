@@ -5,7 +5,7 @@ from unittest import TestCase
 from engine.game import Game
 from world.character import Describable, Character, Gesture
 from world.item import Item, Inventory
-from world.location import Location
+from world.location import Exit, Location
 from world.scene import Scene
 from world.verb import Verb
 from world.mappings import VerbMapping
@@ -45,3 +45,12 @@ class TestWorld(TestCase):
         inventory.add(Item("rock"))
         location = Location("test", inventory, input_scene)
         self.assertEqual("A scene.\nA rock is here.", location.description.text)
+
+    def test_location_description_lists_all_exits(self):
+        location = Location("test", Inventory(), Scene("A scene."))
+        location.exits = {
+            "west": Exit("west", location),
+            "east": Exit("east", location),
+        }
+
+        self.assertEqual("A scene.\nExits: east, west", location.description.text)
