@@ -30,10 +30,10 @@ class Inventory(MutableMapping[str, Item]):
     def __iter__(self) -> Iterator[str]:
         return self._items.__iter__()
 
-    def __contains__(self, __x: str) -> bool:
+    def __contains__(self, __x: object) -> bool:
         return self._items.__contains__(__x)
 
-    def __getitem__(self, __x: str):
+    def __getitem__(self, __x: str) -> Item:
         return self._items.__getitem__(__x)
 
     def __delitem__(self, key: str) -> None:

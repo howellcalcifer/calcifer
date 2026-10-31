@@ -1,16 +1,20 @@
-from engine.events import ActionApplied, ActionRejected, GameStarted, GameStopped
+from typing import assert_never
+
+from engine.events import ActionApplied, ActionRejected, GameEvent, GameStarted, GameStopped
 from pattern.observer import Observer
 from ui.controllers import OutputController
+from world.item import Item
+from world.location import Exit
 from world.scene import Scene
 from world.verb import VerbType
 
 
-class GameOutputObserver(Observer):
+class GameOutputObserver(Observer[GameEvent]):
 
     def __init__(self, output_controller: OutputController):
         self.output = output_controller
 
-    def update(self, event: object) -> None:
+    def update(self, event: GameEvent) -> None:
         if isinstance(event, GameStarted):
             self.output.show_scene(event.protagonist.description)
         elif isinstance(event, GameStopped):
@@ -20,11 +24,16 @@ class GameOutputObserver(Observer):
         elif isinstance(event, ActionApplied):
             action = event.action
             if action.verb.type == VerbType.LOOK:
+                assert action.object is not None
                 self.output.show_scene(action.object.description)
             elif action.verb.type == VerbType.GESTURE:
                 self.output.show_scene(action.verb.description)
             elif action.verb.type == VerbType.INVENTORY:
+                assert isinstance(action.object, Item)
                 self.output.show_scene(Scene(f"You {action.verb.name} the {action.object.name}."))
             elif action.verb.type == VerbType.MOVE:
+                assert isinstance(action.object, Exit)
                 self.output.show_scene(Scene(f"You go {action.object.direction}.\n"))
                 self.output.show_scene(action.object.leads_to.description)
+        else:
+            assert_never(event)

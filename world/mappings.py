@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from importlib.resources import files
+from typing import Any
 
 from yaml import load, Loader
 
@@ -22,20 +23,15 @@ class LocationMapping(dict[str, Location]):
         mapping = cls()
         for name, properties in raw_struct.items():
             inventory = cls.load_inventory(properties, items)
-            args = (name, inventory)
-            kwargs = {}
-            try:
-                kwargs['description_init'] = Scene(properties['description'])
-            except KeyError:
-                pass
-            mapping[name] = Location(*args, **kwargs)
+            description = Scene(properties.get('description', ''))
+            mapping[name] = Location(name, inventory, description)
             cls.set_character_locations(properties, characters, mapping[name])
         for name, properties in raw_struct.items():
             mapping[name].exits = cls.load_exits(properties, mapping)
         return mapping
 
     @staticmethod
-    def load_inventory(yaml_character, items):
+    def load_inventory(yaml_character: dict[str, Any], items: ItemMapping) -> Inventory:
         inventory = Inventory()
         if 'inventory' in yaml_character:
             for item_name in yaml_character['inventory']:
@@ -43,15 +39,17 @@ class LocationMapping(dict[str, Location]):
         return inventory
 
     @staticmethod
-    def load_exits(yaml_location, locations):
+    def load_exits(yaml_location: dict[str, Any], locations: LocationMapping) -> dict[str, Exit]:
         exits = {}
         if 'exits' in yaml_location:
             for exit in yaml_location['exits']:
-                exits[exit['direction']] = Exit(direction=exit['direction'], leads_to=locations[exit['location']])
+                direction = exit['direction']
+                exits[direction] = Exit(direction=direction, leads_to=locations[exit['location']])
         return exits
 
     @staticmethod
-    def set_character_locations(yaml_location, characters, location):
+    def set_character_locations(yaml_location: dict[str, Any], characters: CharacterMapping,
+                                 location: Location) -> None:
         if 'characters' in yaml_location:
             for char_name in yaml_location['characters']:
                 characters[char_name].location = location
@@ -66,21 +64,13 @@ class CharacterMapping(dict[str, Character]):
         mapping = cls()
         for name, properties in raw_struct.items():
             inventory = cls.load_inventory(properties, items)
-            args = (name, inventory)
-            kwargs = {}
-            try:
-                kwargs['description'] = Scene(properties['description'])
-            except KeyError:
-                pass
-            try:
-                kwargs['display_name'] = properties['display_name']
-            except KeyError:
-                pass
-            mapping[name] = Character(*args, **kwargs)
+            description = Scene(properties['description']) if 'description' in properties else None
+            mapping[name] = Character(name, inventory, display_name=properties.get('display_name'),
+                                      description=description)
         return mapping
 
     @staticmethod
-    def load_inventory(yaml_character, items):
+    def load_inventory(yaml_character: dict[str, Any], items: ItemMapping) -> Inventory:
         inventory = Inventory()
         if 'inventory' in yaml_character:
             for item_name in yaml_character['inventory']:
@@ -95,17 +85,8 @@ class ItemMapping(dict[str, Item]):
             raw_struct = load(text_io, Loader)
         item_mapping = ItemMapping()
         for name, properties in raw_struct.items():
-            args = (name,)
-            kwargs = {}
-            try:
-                kwargs['description'] = Scene(properties['description'])
-            except KeyError:
-                pass
-            try:
-                kwargs['display_name'] = properties['display_name']
-            except KeyError:
-                pass
-            item_mapping[name] = Item(*args, **kwargs)
+            description = Scene(properties['description']) if 'description' in properties else None
+            item_mapping[name] = Item(name, description=description, display_name=properties.get('display_name'))
         return item_mapping
 
 
@@ -117,18 +98,17 @@ class VerbMapping(dict[str, Verb]):
         verb_dictionary = VerbMapping()
 
         for verb, properties in raw_struct.items():
-            verb_args = (verb, VerbType(properties["type"]),
-                         Scene(properties["description"]) if "description" in properties else Scene(f"You {verb}."),
-                         properties[
-                             "transitive"] if "transitive" in properties else None,
-                         properties[
-                             "intransitive"] if "intransitive" in properties else None)
-            for prop in ["source", "destination"]:
-                try:
-                    verb_args = verb_args + (CurrentContainerType(properties[prop]),)
-                except KeyError:
-                    pass
-
-            verb_dictionary[verb] = Verb.create(*verb_args)
+            verb_type = VerbType(properties["type"])
+            description = Scene(properties["description"]) if "description" in properties else Scene(f"You {verb}.")
+            transitive = properties.get("transitive")
+            intransitive = properties.get("intransitive")
+            if verb_type == VerbType.INVENTORY:
+                verb_dictionary[verb] = Verb.create(
+                    verb, verb_type, description, transitive, intransitive,
+                    CurrentContainerType(properties["source"]),
+                    CurrentContainerType(properties["destination"]),
+                )
+            else:
+                verb_dictionary[verb] = Verb.create(verb, verb_type, description, transitive, intransitive)
 
         return verb_dictionary

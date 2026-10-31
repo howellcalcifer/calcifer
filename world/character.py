@@ -4,7 +4,7 @@ import abc
 import dataclasses
 from typing import Optional
 
-from pattern.observer import Subject, ObservedAttribute
+from pattern.observer import AttributeChanged, Subject, ObservedAttribute
 from world.item import Inventory
 from world.location import Location
 from world.scene import Scene
@@ -37,7 +37,7 @@ class Describable(abc.ABC):
             for C in subclass.__mro__)
 
 
-class Character(Subject):
+class Character(Subject[AttributeChanged]):
     def __init__(self, name: str, inventory: Inventory, display_name: str | None = None,
                  description: Scene | None = None):
         super().__init__()
@@ -48,9 +48,9 @@ class Character(Subject):
         self._display_name = display_name
         self._description = description
 
-    location: Location = ObservedAttribute()
-    looking_at: Optional[Describable] = ObservedAttribute()
-    gesture: Optional[Describable] = ObservedAttribute()
+    location: ObservedAttribute[Location] = ObservedAttribute()
+    looking_at: ObservedAttribute[Optional[Describable]] = ObservedAttribute()
+    gesture: ObservedAttribute[Optional[Describable]] = ObservedAttribute()
 
     @property
     def name(self):

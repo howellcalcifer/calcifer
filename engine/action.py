@@ -5,14 +5,14 @@ from typing import Optional
 
 from world.character import Character
 from world.item import Item
-from world.location import Exit
+from world.location import Exit, Location
 from world.verb import Verb
 
 
 @dataclasses.dataclass(frozen=True)
 class UserAction:
     verb: Verb
-    object: Optional[Item | Character | Exit] = None
+    object: Optional[Item | Character | Exit | Location] = None
 
     def __hash__(self):
         return hash((self.verb, self.object))

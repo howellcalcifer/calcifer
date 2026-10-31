@@ -1,10 +1,9 @@
-import itertools
-from abc import ABC
 from enum import Enum
-from typing import Optional, Mapping, Iterator
+from collections.abc import Iterator, Mapping
 
 from world.character import Character
 from world.item import Item
+from world.location import Exit
 
 
 class CurrentContainerType(Enum):
@@ -17,28 +16,35 @@ class CurrentContainerType(Enum):
     VISIBLE = 'visible'
 
 
-class CurrentContainerFactory(ABC):
-    protagonist: Optional[Character]
+class CurrentContainerFactory:
+    protagonist: Character | None
 
-    def create(self, typ: CurrentContainerType, _: Optional[Item | Mapping] = None) -> Mapping:
+    def create(self, typ: CurrentContainerType) -> Mapping[str, Item | Character | Exit]:
+        protagonist = self.protagonist
+        if protagonist is None:
+            raise RuntimeError("The game has no protagonist")
         if typ == CurrentContainerType.LOCATION_ITEMS:
-            return self.protagonist.location.inventory
+            return protagonist.location.inventory
         if typ == CurrentContainerType.PROTAGONIST_ITEMS:
-            return self.protagonist.inventory
+            return protagonist.inventory
         if typ == CurrentContainerType.LOCATION_EXITS:
-            return self.protagonist.location.exits
+            return protagonist.location.exits
         if typ == CurrentContainerType.VISIBLE:
-            subcontainers = [self.protagonist.location.inventory, self.protagonist.inventory,
-                             self.protagonist.location.exits]
+            subcontainers: list[Mapping[str, Item | Character | Exit]] = [
+                protagonist.location.inventory,
+                protagonist.inventory,
+                protagonist.location.exits,
+            ]
             return CurrentContainerCombined(subcontainers)
+        raise ValueError(f"Unsupported container type: {typ}")
 
 
-class CurrentContainerCombined(Mapping[str, Item | Character]):
+class CurrentContainerCombined(Mapping[str, Item | Character | Exit]):
 
-    def __init__(self, subcontainers: list[Mapping]):
-        self._subcontainers: list[Mapping[str, Item | Character]] = subcontainers
+    def __init__(self, subcontainers: list[Mapping[str, Item | Character | Exit]]):
+        self._subcontainers = subcontainers
 
-    def __getitem__(self, key: str) -> Item | Character:
+    def __getitem__(self, key: str) -> Item | Character | Exit:
         for container in self._subcontainers:
             try:
                 return container[key]
@@ -49,5 +55,6 @@ class CurrentContainerCombined(Mapping[str, Item | Character]):
     def __len__(self) -> int:
         return sum(len(container) for container in self._subcontainers)
 
-    def __iter__(self) -> Iterator[Item | Character]:
-        return itertools.chain(*self._subcontainers)
+    def __iter__(self) -> Iterator[str]:
+        for container in self._subcontainers:
+            yield from container

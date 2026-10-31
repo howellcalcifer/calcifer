@@ -19,6 +19,10 @@ pipenv install --dev
 
 `pipenv run pytest`
 
+### Type check
+
+`pipenv run mypy`
+
 To generate an HTML coverage report:
 
 `pipenv run pytest --cov --cov-report html:coverage_report`

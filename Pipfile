@@ -11,6 +11,8 @@ pytest-snapshot = "*"
 ruff = "*"
 pytest = "*"
 pytest-cov = "*"
+mypy = "*"
+types-PyYAML = "*"
 
 [requires]
 python_version = "3.11"

@@ -2,7 +2,7 @@ import abc
 import textwrap
 
 from engine.action import UnresolvedAction
-from engine.events import ActionSubmitted, InputRejected
+from engine.events import ActionSubmitted, InputEvent, InputRejected
 from engine.game import Game
 from pattern.observer import Subject
 from ui.text.parser import TextParser, InvalidUserActionException
@@ -12,11 +12,11 @@ from world.scene import Scene
 
 class OutputController(abc.ABC):
     @abc.abstractmethod
-    def show_scene(self, scene: Scene):
+    def show_scene(self, scene: Scene | None) -> None:
         pass
 
 
-class InputController(Subject, abc.ABC):
+class InputController(Subject[InputEvent], abc.ABC):
 
     @abc.abstractmethod
     def await_user_action(self) -> UnresolvedAction:
@@ -32,7 +32,7 @@ class OutputException(Exception):
 
 
 class OutputControllerCommandLine(OutputController):
-    def show_scene(self, scene: Scene):
+    def show_scene(self, scene: Scene | None) -> None:
         if scene is None:
             raise OutputException("Trying to show a non-existent scene")
         if scene.text is None:
