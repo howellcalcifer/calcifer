@@ -48,9 +48,9 @@ class Character(Subject):
         self._display_name = display_name
         self._description = description
 
-    location: Location = ObservedAttribute('location')
-    looking_at: Optional[Describable] = ObservedAttribute('looking_at')
-    gesture: Optional[Describable] = ObservedAttribute('gesture')
+    location: Location = ObservedAttribute()
+    looking_at: Optional[Describable] = ObservedAttribute()
+    gesture: Optional[Describable] = ObservedAttribute()
 
     @property
     def name(self):

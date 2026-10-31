@@ -6,6 +6,8 @@ Date: 2023-06-25
 
 Accepted
 
+The notification mechanism described here was amended by [7. Publish explicit push-style observer events](0007-publish-explicit-push-style-observer-events.md). Validation remains in the input-game observer.
+
 ## Context
 
 Tests for action validation are awkward as they're tied to parsing from string input

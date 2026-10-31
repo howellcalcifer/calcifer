@@ -1,8 +1,8 @@
 from engine.action_resolver import ActionResolver
 from engine.exceptions import InvalidUnresolvedAction
+from engine.events import ActionApplied, ActionRejected, ActionSubmitted
 from engine.game import Game
 from pattern.observer import Observer
-from ui.controllers import InputController
 from world.verb import VerbType
 
 
@@ -12,14 +12,14 @@ class InputGameObserver(Observer):
         self._game = game
         self._action_resolver = ActionResolver(game)
 
-    def update(self, controller: InputController) -> None:
+    def update(self, event: ActionSubmitted) -> None:
         try:
-            action = self._action_resolver.resolve(controller.action)
+            action = self._action_resolver.resolve(event.action)
         except InvalidUnresolvedAction as e:
-            self._game.latest_rejected_action = e
+            self._game.publish(ActionRejected(e))
             return
         if action.verb.type == VerbType.QUIT:
-            self._game.running = False
+            self._game.stop()
         elif action.verb.type == VerbType.INVENTORY:
             source = self._game.container(action.verb.source)
             destination = self._game.container(action.verb.destination)
@@ -27,5 +27,5 @@ class InputGameObserver(Observer):
             destination.add(action.object)
         elif action.verb.type == VerbType.MOVE:
             self._game.protagonist.location = action.object.leads_to
-        self._game.latest_action = action
+        self._game.publish(ActionApplied(action))
 

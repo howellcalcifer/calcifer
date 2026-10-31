@@ -24,6 +24,5 @@ def main(data_module: str = 'data'):
     input_observer = InputGameObserver(game)
     input_controller.subscribe(input_observer)
 
-    game.protagonist = protagonist
-    game.running = True
+    game.start(protagonist)
     input_controller.start()

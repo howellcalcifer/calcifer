@@ -2,8 +2,9 @@ import abc
 import textwrap
 
 from engine.action import UnresolvedAction
+from engine.events import ActionSubmitted
 from engine.game import Game
-from pattern.observer import Subject, ObservedAttribute
+from pattern.observer import Subject
 from ui.text.parser import TextParser, InvalidUserActionException
 from world.mappings import VerbMapping
 from world.scene import Scene
@@ -16,11 +17,6 @@ class OutputController(abc.ABC):
 
 
 class InputController(Subject, abc.ABC):
-
-    @property
-    @abc.abstractmethod
-    def action(self) -> UnresolvedAction:
-        pass
 
     @abc.abstractmethod
     def await_user_action(self) -> UnresolvedAction:
@@ -55,18 +51,16 @@ class InputControllerCommandLine(InputController):
         super().__init__()
         self._parser = TextParser(verbs)
         self._game = game
-        self._action = None
-
-    action: UnresolvedAction = ObservedAttribute('action')
 
     def await_user_action(self):
         while True:
             try:
-                self.action = self._parser.parse_user_action(input())
+                action = self._parser.parse_user_action(input())
             except InvalidUserActionException as e:
                 print(e)
                 continue
-            return
+            self.publish(ActionSubmitted(action))
+            return action
 
     def start(self):
         while self._game.running:

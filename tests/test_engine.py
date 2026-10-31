@@ -6,8 +6,9 @@ from engine.action_resolver import ActionResolver, InvalidUnresolvedAction
 from engine.container_factory import CurrentContainerFactory, CurrentContainerType
 from engine.game_output_observer import GameOutputObserver
 from engine.input_game_observer import InputGameObserver
+from engine.events import ActionApplied, ActionRejected, ActionSubmitted, GameStarted, GameStopped
 from tests.harness.harness import TestGameCase
-from ui.controllers import InputController, OutputController
+from ui.controllers import OutputController
 from world.character import Character
 from world.item import Inventory, Item
 from world.location import Location, Exit
@@ -136,51 +137,49 @@ class TestInputGameObserver(TestGameCase):
     def setUp(self, mock_action_resolver_class) -> None:
         super().setUp(mock_inventory=True)
         self.game.running = True
-        self.controller = Mock(InputController)
         self.observer = InputGameObserver(self.game)
         self.mock_action_resolver = mock_action_resolver_class.return_value
         self.resolve = self.mock_action_resolver.resolve
 
     def test_resolves_controller_action(self):
         input_action = UnresolvedAction(self.verbs['nod'])
-        self.controller.action = input_action
-        self.observer.update(self.controller)
+        self.observer.update(ActionSubmitted(input_action))
         self.resolve.assert_called_with(input_action)
 
     def test_quits_on_quit_action(self):
         self.resolve.return_value = UserAction(self.verbs['quit'])
-        self.observer.update(self.controller)
-        self.assertFalse(self.game.running)
+        self.observer.update(ActionSubmitted(UnresolvedAction(self.verbs['quit'])))
+        self.game.stop.assert_called_once_with()
 
     def test_takes_on_take_action(self):
         self.resolve.return_value = UserAction(self.verbs['take'], self.items['rock'])
-        self.observer.update(self.controller)
+        self.observer.update(ActionSubmitted(UnresolvedAction(self.verbs['take'], 'rock')))
         self.game.protagonist.inventory.add.assert_called_with(self.items['rock'])
         self.game.protagonist.location.inventory.remove.assert_called_with(self.items['rock'])
 
     def test_drops_on_drop_action(self):
         self.resolve.return_value = UserAction(self.verbs['drop'], self.items['rock'])
-        self.observer.update(self.controller)
+        self.observer.update(ActionSubmitted(UnresolvedAction(self.verbs['drop'], 'rock')))
         self.game.protagonist.inventory.remove.assert_called_with(self.items['rock'])
         self.game.protagonist.location.inventory.add.assert_called_with(self.items['rock'])
 
     def test_move_on_move_action(self):
         east_exit = Exit("east", self.locations['east_place'])
         self.resolve.return_value = UserAction(self.verbs['go'], east_exit)
-        self.observer.update(self.controller)
+        self.observer.update(ActionSubmitted(UnresolvedAction(self.verbs['go'], 'east')))
         self.assertEqual(self.game.protagonist.location, self.locations['east_place'])
 
     def test_publishes_rejected_action(self):
         rejected_action = InvalidUnresolvedAction("A bad thing happened")
         self.resolve.side_effect = rejected_action
-        self.observer.update(self.controller)
-        self.assertEqual(self.game.latest_rejected_action, rejected_action)
+        self.observer.update(ActionSubmitted(UnresolvedAction(self.verbs['nod'])))
+        self.game.publish.assert_called_once_with(ActionRejected(rejected_action))
 
-    def test_set_latest_action(self):
+    def test_publishes_applied_action(self):
         resolved_action = UserAction(self.verbs['drop'], self.items['rock'])
         self.resolve.return_value = resolved_action
-        self.observer.update(self.controller)
-        self.assertEqual(self.game.latest_action, resolved_action)
+        self.observer.update(ActionSubmitted(UnresolvedAction(self.verbs['drop'], 'rock')))
+        self.game.publish.assert_called_once_with(ActionApplied(resolved_action))
 
 
 class TestGameOutputObserver(TestGameCase):
@@ -191,17 +190,13 @@ class TestGameOutputObserver(TestGameCase):
         self.observer = GameOutputObserver(self.output)
 
     def test_shows_quit_scene_when_stop_running(self):
-        self.game.running = False
-        self.game.changed_observed_attribute = 'running'
-        self.observer.update(self.game)
+        self.observer.update(GameStopped())
         self.output.show_scene.assert_called_with(Scene("Goodbye for now."))
 
     def test_shows_protagonist_when_start_running(self):
-        self.game.running = True
-        self.game.changed_observed_attribute = 'running'
         self.game.protagonist = Mock(Character)
         self.game.protagonist.description = Scene("You seem nice.")
-        self.observer.update(self.game)
+        self.observer.update(GameStarted(self.game.protagonist))
         self.output.show_scene.assert_called_with(Scene("You seem nice."))
 
     def test_shows_scenes_for_action(self):
@@ -214,13 +209,9 @@ class TestGameOutputObserver(TestGameCase):
                               scenes=[Scene("You go east.\n"), self.locations['east_place'].description])
         ]
         for case in cases:
-            self.game.latest_action = case.action
-            self.game.changed_observed_attribute = 'latest_action'
-            self.observer.update(self.game)
+            self.observer.update(ActionApplied(case.action))
             self.output.show_scene.assert_has_calls([call(scene) for scene in case.scenes])
 
     def test_shows_scene_for_rejected_action(self):
-        self.game.latest_rejected_action = InvalidUnresolvedAction("That's a fail")
-        self.game.changed_observed_attribute = 'latest_rejected_action'
-        self.observer.update(self.game)
+        self.observer.update(ActionRejected(InvalidUnresolvedAction("That's a fail")))
         self.output.show_scene.assert_called_with(Scene("That's a fail"))

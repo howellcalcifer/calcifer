@@ -4,6 +4,7 @@ from unittest import TestCase
 from unittest.mock import patch, Mock, call
 
 from engine.container_factory import CurrentContainerType
+from engine.events import ActionSubmitted
 from engine.game import Game
 from ui.controllers import OutputControllerCommandLine, InputControllerCommandLine, OutputException
 from ui.text.parser import InvalidUserActionException
@@ -116,6 +117,8 @@ class TestInputCommandLineUserAction(TestCase):
         self.game.protagonist = Mock(Character)
         self.game.protagonist.location = self.location
         self.controller = InputControllerCommandLine(verbs, self.game)
+        self.input_observer = Mock()
+        self.controller.subscribe(self.input_observer)
         self.mock_parser = mock_text_parser_class.return_value
         self.inventory = Inventory()
         self.ground = Inventory()
@@ -143,8 +146,10 @@ class TestInputCommandLineUserAction(TestCase):
             raw_inputs = [user_input.input for user_input in case.inputs]
             mock_input.side_effect = raw_inputs
 
-            self.controller.await_user_action()
+            action = self.controller.await_user_action()
             self.mock_parser.parse_user_action.assert_has_calls([call(i) for i in raw_inputs])
+            self.assertEqual(case.expected_action, action)
+            self.input_observer.update.assert_called_with(ActionSubmitted(case.expected_action))
 
     @patch('builtins.input')
     def test_await_user_action(self, _):  # we don't care about the raw input, we care about the parser output
@@ -155,6 +160,7 @@ class TestInputCommandLineUserAction(TestCase):
 
             raw_inputs = [user_input.input for user_input in case.inputs]
             test_message = "for inputs " + ", ".join(list(raw_inputs))
-            self.controller.await_user_action()
-            self.assertEqual(case.expected_action, self.controller.action, msg=test_message)
+            action = self.controller.await_user_action()
+            self.assertEqual(case.expected_action, action, msg=test_message)
+            self.input_observer.update.assert_called_with(ActionSubmitted(case.expected_action))
 

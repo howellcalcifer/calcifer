@@ -8,6 +8,8 @@ Accepted
 
 Amends [3. use observer pattern to respond to changes in game state](0003-use-observer-pattern-for-game-events.md)
 
+The notification mechanism described here was amended by [7. Publish explicit push-style observer events](0007-publish-explicit-push-style-observer-events.md). The input-to-game-to-output observer flow remains in place.
+
 ## Context
 
 Implementing moving between locations made me realise that having separate observers 

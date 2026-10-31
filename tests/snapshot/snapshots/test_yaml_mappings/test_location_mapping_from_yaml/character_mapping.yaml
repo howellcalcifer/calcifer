@@ -25,10 +25,6 @@ dictitems:
                 leads_to: *id001
             inventory: !!python/object:world.item.Inventory
               _items: {}
-              _subscribers: []
-              changed_observed_attribute: null
-              item_incoming: null
-              item_outgoing: null
             name: pub
         south: !!python/object:world.location.Exit
           direction: south
@@ -41,10 +37,6 @@ dictitems:
                 leads_to: *id001
             inventory: !!python/object:world.item.Inventory
               _items: {}
-              _subscribers: []
-              changed_observed_attribute: null
-              item_incoming: null
-              item_outgoing: null
             name: clearing
       inventory: !!python/object:world.item.Inventory
         _items:
@@ -53,15 +45,10 @@ dictitems:
               text: A fist-sized lump of stone.
             display_name: null
             name: rock
-        _subscribers: []
-        changed_observed_attribute: null
-        item_incoming: null
-        item_outgoing: null
       name: library
     _looking_at: null
     _name: calcifer
     _subscribers: []
-    changed_observed_attribute: null
     inventory: !!python/object:world.item.Inventory
       _items:
         lock: !!python/object:world.item.Item
@@ -73,10 +60,6 @@ dictitems:
             text: A knitted, striped sock.
           display_name: null
           name: sock
-      _subscribers: []
-      changed_observed_attribute: null
-      item_incoming: null
-      item_outgoing: null
   howell: !!python/object:world.character.Character
     _description: null
     _display_name: null
@@ -85,7 +68,6 @@ dictitems:
     _looking_at: null
     _name: howell
     _subscribers: []
-    changed_observed_attribute: null
     inventory: !!python/object:world.item.Inventory
       _items:
         beer: !!python/object:world.item.Item
@@ -93,7 +75,3 @@ dictitems:
             text: A pint of beer.
           display_name: null
           name: beer
-      _subscribers: []
-      changed_observed_attribute: null
-      item_incoming: null
-      item_outgoing: null
