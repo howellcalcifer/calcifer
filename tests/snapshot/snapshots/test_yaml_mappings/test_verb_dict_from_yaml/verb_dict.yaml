@@ -1,6 +1,6 @@
 !!python/object/new:world.mappings.VerbMapping
 dictitems:
-  abracadabra: !!python/object:world.verb.Verb
+  abracadabra: &id001 !!python/object:world.verb.Verb
     description: !!python/object:world.scene.Scene
       text: You abracadabra.
     intransitive: true
@@ -8,13 +8,14 @@ dictitems:
     transitive: false
     type: !!python/object/apply:world.verb.VerbType
     - magic
+  alakazam: *id001
   bow: !!python/object:world.verb.Verb
     description: !!python/object:world.scene.Scene
       text: You bow gracefully.
     intransitive: true
     name: bow
     transitive: false
-    type: &id001 !!python/object/apply:world.verb.VerbType
+    type: &id005 !!python/object/apply:world.verb.VerbType
     - gesture
   drop: !!python/object:world.verb.InventoryVerb
     description: !!python/object:world.scene.Scene
@@ -28,6 +29,15 @@ dictitems:
     transitive: true
     type: &id004 !!python/object/apply:world.verb.VerbType
     - inventory
+  get: &id007 !!python/object:world.verb.InventoryVerb
+    description: !!python/object:world.scene.Scene
+      text: You take.
+    destination: *id002
+    intransitive: false
+    name: take
+    source: *id003
+    transitive: true
+    type: *id004
   go: !!python/object:world.verb.Verb
     description: !!python/object:world.scene.Scene
       text: You go.
@@ -42,7 +52,14 @@ dictitems:
     intransitive: true
     name: grimace
     transitive: null
-    type: *id001
+    type: *id005
+  grin: &id006 !!python/object:world.verb.Verb
+    description: !!python/object:world.scene.Scene
+      text: You smile.
+    intransitive: true
+    name: smile
+    transitive: false
+    type: *id005
   look: !!python/object:world.verb.Verb
     description: !!python/object:world.scene.Scene
       text: You look.
@@ -67,19 +84,5 @@ dictitems:
     transitive: false
     type: !!python/object/apply:world.verb.VerbType
     - posture
-  smile: !!python/object:world.verb.Verb
-    description: !!python/object:world.scene.Scene
-      text: You smile.
-    intransitive: true
-    name: smile
-    transitive: false
-    type: *id001
-  take: !!python/object:world.verb.InventoryVerb
-    description: !!python/object:world.scene.Scene
-      text: You take.
-    destination: *id002
-    intransitive: false
-    name: take
-    source: *id003
-    transitive: true
-    type: *id004
+  smile: *id006
+  take: *id007

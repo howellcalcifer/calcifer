@@ -5,6 +5,7 @@ from world.mappings import LocationMapping, CharacterMapping, ItemMapping, VerbM
 
 def test_verb_dict_from_yaml(snapshot):
     actual_dict = VerbMapping.from_yaml("data.test", "verbs.yaml")
+    assert actual_dict["get"] is actual_dict["take"]
     snapshot.assert_match(yaml.dump(actual_dict), 'verb_dict.yaml')
 
 

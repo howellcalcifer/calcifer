@@ -29,7 +29,7 @@ look_verb = Verb(name='look', type=VerbType.LOOK, description=None, intransitive
 quit_verb = Verb(name='quit', type=VerbType.QUIT, description=None, intransitive=True, transitive=False)
 go_verb = Verb(name='go', type=VerbType.MOVE, description=None, intransitive=False, transitive=True)
 verbs = VerbMapping(
-    [('drop', drop_verb), ('nod', nod_verb), ('take', take_verb), ('look', look_verb), ('quit', quit_verb),
+    [('drop', drop_verb), ('nod', nod_verb), ('take', take_verb), ('get', take_verb), ('look', look_verb), ('quit', quit_verb),
      ('go', go_verb)])
 rock_item = Item('rock')
 entity_dict = {'rock': rock_item}
@@ -50,6 +50,8 @@ class TestTranslate(TestCase):
                  UserInputCase(user_input="drop rock", expect_invalid=False,
                                expected_result=UnresolvedAction(verb=drop_verb, object_ref_1="rock")),
                  UserInputCase(user_input="take rock", expect_invalid=False,
+                               expected_result=UnresolvedAction(verb=take_verb, object_ref_1="rock")),
+                 UserInputCase(user_input="get rock", expect_invalid=False,
                                expected_result=UnresolvedAction(verb=take_verb, object_ref_1="rock")),
                  UserInputCase(user_input="look rock", expect_invalid=False,
                                expected_result=UnresolvedAction(verb=look_verb, object_ref_1="rock")),

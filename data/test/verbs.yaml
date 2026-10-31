@@ -30,6 +30,8 @@ take:
   transitive: true
   intransitive: false
   type: inventory
+  aliases:
+    - get
   source: ground
   destination: inventory
 drop:

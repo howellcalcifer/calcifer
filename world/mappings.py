@@ -103,12 +103,16 @@ class VerbMapping(dict[str, Verb]):
             transitive = properties.get("transitive")
             intransitive = properties.get("intransitive")
             if verb_type == VerbType.INVENTORY:
-                verb_dictionary[verb] = Verb.create(
+                mapped_verb = Verb.create(
                     verb, verb_type, description, transitive, intransitive,
                     CurrentContainerType(properties["source"]),
                     CurrentContainerType(properties["destination"]),
                 )
             else:
-                verb_dictionary[verb] = Verb.create(verb, verb_type, description, transitive, intransitive)
+                mapped_verb = Verb.create(verb, verb_type, description, transitive, intransitive)
+
+            verb_dictionary[verb] = mapped_verb
+            for alias in properties.get("aliases", []):
+                verb_dictionary[alias] = mapped_verb
 
         return verb_dictionary
