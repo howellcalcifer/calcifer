@@ -2,7 +2,7 @@ import abc
 import textwrap
 
 from engine.action import UnresolvedAction
-from engine.events import ActionSubmitted
+from engine.events import ActionSubmitted, InputRejected
 from engine.game import Game
 from pattern.observer import Subject
 from ui.text.parser import TextParser, InvalidUserActionException
@@ -57,7 +57,7 @@ class InputControllerCommandLine(InputController):
             try:
                 action = self._parser.parse_user_action(input())
             except InvalidUserActionException as e:
-                print(e)
+                self.publish(InputRejected(e))
                 continue
             self.publish(ActionSubmitted(action))
             return action

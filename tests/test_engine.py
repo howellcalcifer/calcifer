@@ -6,7 +6,7 @@ from engine.action_resolver import ActionResolver, InvalidUnresolvedAction
 from engine.container_factory import CurrentContainerFactory, CurrentContainerType
 from engine.game_output_observer import GameOutputObserver
 from engine.input_game_observer import InputGameObserver
-from engine.events import ActionApplied, ActionRejected, ActionSubmitted, GameStarted, GameStopped
+from engine.events import ActionApplied, ActionRejected, ActionSubmitted, GameStarted, GameStopped, InputRejected
 from tests.harness.harness import TestGameCase
 from ui.controllers import OutputController
 from world.character import Character
@@ -174,6 +174,13 @@ class TestInputGameObserver(TestGameCase):
         self.resolve.side_effect = rejected_action
         self.observer.update(ActionSubmitted(UnresolvedAction(self.verbs['nod'])))
         self.game.publish.assert_called_once_with(ActionRejected(rejected_action))
+
+    def test_forwards_input_rejection_to_game(self):
+        rejected_input = Exception("Invalid syntax")
+
+        self.observer.update(InputRejected(rejected_input))
+
+        self.game.publish.assert_called_once_with(ActionRejected(rejected_input))
 
     def test_publishes_applied_action(self):
         resolved_action = UserAction(self.verbs['drop'], self.items['rock'])

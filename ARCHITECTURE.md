@@ -8,8 +8,8 @@ Calcifer is a small text-adventure engine organized around a UI-independent game
 
 ## Action and output flow
 
-1. [`ui/controllers.py`](ui/controllers.py) defines abstract input and output controller interfaces, along with command-line implementations. The input controller uses [`ui/text/parser.py`](ui/text/parser.py) to parse typed text into an `UnresolvedAction` and publishes it as `ActionSubmitted`.
-2. [`engine/input_game_observer.py`](engine/input_game_observer.py) receives the event and asks [`engine/action_resolver.py`](engine/action_resolver.py) to resolve it against the current game context. The resolver looks up named objects through the game's container factory and rejects actions that are invalid for the current context.
+1. [`ui/controllers.py`](ui/controllers.py) defines abstract input and output controller interfaces, along with command-line implementations. The input controller uses [`ui/text/parser.py`](ui/text/parser.py) to parse typed text into an `UnresolvedAction` and publishes it as `ActionSubmitted`. Parse failures are published as `InputRejected`; the controller does not render them.
+2. [`engine/input_game_observer.py`](engine/input_game_observer.py) forwards input rejections to the game as `ActionRejected`, or asks [`engine/action_resolver.py`](engine/action_resolver.py) to resolve a submitted action against the current game context. The resolver looks up named objects through the game's container factory and rejects actions that are invalid for the current context.
 3. The observer applies a resolved action to [`engine/game.py`](engine/game.py), updating game state such as the protagonist's location or inventory, then publishes `ActionApplied`. Invalid actions publish `ActionRejected` instead.
 4. The game publishes `GameStarted` and `GameStopped` lifecycle events when it starts or stops. [`engine/game_output_observer.py`](engine/game_output_observer.py) handles these and action events, maps them to `Scene` objects, and sends them to the output controller for display.
 
@@ -17,8 +17,9 @@ Calcifer is a small text-adventure engine organized around a UI-independent game
 flowchart TD
 	User[Player input] --> Controller[InputControllerCommandLine]
 	Controller --> Parser[TextParser]
-	Parser -->|Invalid syntax| ParseError[Print parse error and retry]
-	ParseError --> Controller
+	Parser -->|Invalid syntax| InputRejected[Publish InputRejected]
+	InputRejected --> InputObserver
+	InputObserver -->|Forward as ActionRejected| GameEvent
 	Parser -->|Valid syntax| Unresolved[UnresolvedAction]
 	Unresolved -->|Publish ActionSubmitted| InputObserver[InputGameObserver]
 	InputObserver --> Resolver[ActionResolver]

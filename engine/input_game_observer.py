@@ -1,6 +1,6 @@
 from engine.action_resolver import ActionResolver
 from engine.exceptions import InvalidUnresolvedAction
-from engine.events import ActionApplied, ActionRejected, ActionSubmitted
+from engine.events import ActionApplied, ActionRejected, ActionSubmitted, InputRejected
 from engine.game import Game
 from pattern.observer import Observer
 from world.verb import VerbType
@@ -12,7 +12,10 @@ class InputGameObserver(Observer):
         self._game = game
         self._action_resolver = ActionResolver(game)
 
-    def update(self, event: ActionSubmitted) -> None:
+    def update(self, event: ActionSubmitted | InputRejected) -> None:
+        if isinstance(event, InputRejected):
+            self._game.publish(ActionRejected(event.error))
+            return
         try:
             action = self._action_resolver.resolve(event.action)
         except InvalidUnresolvedAction as e:

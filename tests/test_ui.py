@@ -4,7 +4,7 @@ from unittest import TestCase
 from unittest.mock import patch, Mock, call
 
 from engine.container_factory import CurrentContainerType
-from engine.events import ActionSubmitted
+from engine.events import ActionSubmitted, InputRejected
 from engine.game import Game
 from ui.controllers import OutputControllerCommandLine, InputControllerCommandLine, OutputException
 from ui.text.parser import InvalidUserActionException
@@ -163,4 +163,18 @@ class TestInputCommandLineUserAction(TestCase):
             action = self.controller.await_user_action()
             self.assertEqual(case.expected_action, action, msg=test_message)
             self.input_observer.update.assert_called_with(ActionSubmitted(case.expected_action))
+
+    @patch('builtins.print')
+    @patch('builtins.input', return_value="invalid")
+    def test_invalid_syntax_is_published_without_printing(self, _, mocked_print):
+        error = InvalidUserActionException("Nope")
+        self.mock_parser.parse_user_action.side_effect = [error, parsed_nod]
+
+        self.controller.await_user_action()
+
+        self.input_observer.update.assert_has_calls([
+            call(InputRejected(error)),
+            call(ActionSubmitted(parsed_nod)),
+        ])
+        mocked_print.assert_not_called()
 

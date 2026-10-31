@@ -3,7 +3,6 @@ from __future__ import annotations
 import dataclasses
 
 from engine.action import UnresolvedAction, UserAction
-from engine.exceptions import InvalidUnresolvedAction
 from world.character import Character
 
 
@@ -13,13 +12,18 @@ class ActionSubmitted:
 
 
 @dataclasses.dataclass(frozen=True)
+class InputRejected:
+    error: Exception
+
+
+@dataclasses.dataclass(frozen=True)
 class ActionApplied:
     action: UserAction
 
 
 @dataclasses.dataclass(frozen=True)
 class ActionRejected:
-    error: InvalidUnresolvedAction
+    error: Exception
 
 
 @dataclasses.dataclass(frozen=True)

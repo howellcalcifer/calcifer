@@ -8,6 +8,8 @@ Accepted
 
 Amends the notification mechanism in [5. Make input and game observer subjects, not inventory and protagonist](0005-make-input-and-game-observer-subjects-not-inventory-and-protagonist.md) and [6. Move action validation into input-game observer](0006-move-action-validation-into-input-observer.md).
 
+Parse-error presentation is further specified by [8. Route input errors through the output observer](0008-route-input-errors-through-output-observer.md).
+
 ## Context
 
 The input-to-game-to-output flow used pull-style notifications. A subject notified observers by passing itself, and observers inspected a changed-attribute marker and read mutable fields such as the controller's action or the game's latest action and rejection. This split the notification from its meaning and payload, coupled observers to subject state, and made tests set multiple fields to represent one occurrence.
