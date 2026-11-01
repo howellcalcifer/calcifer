@@ -5,6 +5,7 @@ from enum import Enum
 from typing import Optional
 
 from engine.container_factory import CurrentContainerType
+from world.item import Item
 from world.scene import Scene
 
 
@@ -14,6 +15,7 @@ class VerbType(Enum):
     POSTURE = "posture"
     MAGIC = "magic"
     INVENTORY = "inventory"
+    ITEM_TRANSFER = "item_transfer"
     MOVE = "move"
     QUIT = "quit"
 
@@ -32,8 +34,10 @@ class Verb:
     @classmethod
     def create(cls, name: str, type: VerbType, *args, **kwargs) -> Verb:
         match type:
-            case VerbType.INVENTORY:
+            case VerbType.ITEM_TRANSFER:
                 return InventoryVerb(name, type, *args, **kwargs)
+            case VerbType.MAGIC:
+                return MagicVerb(name, type, *args, **kwargs)
             case _:
                 return cls(name, type, *args, **kwargs)
 
@@ -44,3 +48,6 @@ class InventoryVerb(Verb):
     destination: CurrentContainerType
 
 
+@dataclasses.dataclass(frozen=True)
+class MagicVerb(Verb):
+    created_item: Item

@@ -13,6 +13,7 @@ from world.character import Character
 from world.item import Inventory, Item
 from world.location import Location, Exit
 from world.scene import Scene
+from world.verb import MagicVerb, VerbType
 from engine.action import UserAction, UnresolvedAction
 
 
@@ -107,6 +108,12 @@ class TestActionResolver(TestGameCase):
             actual_action = self.resolver.resolve(case.input_unresolved)
             self.assertEqual(case.expected_resolved, actual_action)
 
+    def test_resolve_inventory_action_with_carried_items(self):
+        self.inventory.add(self.items['rock'])
+        action = self.resolver.resolve(UnresolvedAction(self.verbs['inventory']))
+
+        self.assertEqual((self.items['rock'],), action.inventory)
+
     def test_reject_actions(self):
         cases = [
             RejectActionCase(input_unresolved=UnresolvedAction(self.verbs['take'], "east"),
@@ -169,6 +176,20 @@ class TestInputGameObserver(TestGameCase):
         self.observer.update(ActionSubmitted(UnresolvedAction(self.verbs['go'], 'east')))
         self.assertEqual(self.game.protagonist.location, self.locations['east_place'])
 
+    def test_magic_action_creates_item_on_current_location(self):
+        created_item = Item("carrot", Scene("A freshly conjured carrot."))
+        magic_verb = MagicVerb(
+            "abracadabra", VerbType.MAGIC, Scene("You conjure a carrot."),
+            transitive=False, intransitive=True, created_item=created_item,
+        )
+        self.resolve.return_value = UserAction(magic_verb)
+
+        self.observer.update(ActionSubmitted(UnresolvedAction(magic_verb)))
+
+        conjured_item = self.game.protagonist.location.inventory.add.call_args.args[0]
+        self.assertEqual(created_item, conjured_item)
+        self.assertIsNot(created_item, conjured_item)
+
     def test_publishes_rejected_action(self):
         rejected_action = InvalidUnresolvedAction("A bad thing happened")
         self.resolve.side_effect = rejected_action
@@ -213,7 +234,20 @@ class TestGameOutputObserver(TestGameCase):
             ActionToSceneCase(action=UserAction(self.verbs['take'], self.items['rock']),
                               scenes=[Scene("You take the rock.")]),
             ActionToSceneCase(action=UserAction(self.verbs['go'], Exit('east', self.locations['east_place'])),
-                              scenes=[Scene("You go east.\n"), self.locations['east_place'].description])
+                              scenes=[Scene("You go east.\n"), self.locations['east_place'].description]),
+            ActionToSceneCase(action=UserAction(
+                self.verbs['inventory'],
+                inventory=(Item("sock"), Item("lock", display_name="lock of hair")),
+            ), scenes=[Scene("You are carrying: sock, lock of hair.")]),
+            ActionToSceneCase(action=UserAction(self.verbs['inventory'], inventory=()),
+                              scenes=[Scene("You are carrying nothing.")]),
+            ActionToSceneCase(
+                action=UserAction(MagicVerb(
+                    "abracadabra", VerbType.MAGIC, Scene("You conjure a carrot."),
+                    transitive=False, intransitive=True, created_item=Item("carrot"),
+                )),
+                scenes=[Scene("You conjure a carrot.")],
+            )
         ]
         for case in cases:
             self.observer.update(ActionApplied(case.action))

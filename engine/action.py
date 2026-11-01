@@ -13,9 +13,10 @@ from world.verb import Verb
 class UserAction:
     verb: Verb
     object: Optional[Item | Character | Exit | Location] = None
+    inventory: tuple[Item, ...] | None = None
 
     def __hash__(self):
-        return hash((self.verb, self.object))
+        return hash((self.verb, self.object, self.inventory))
 
 
 @dataclasses.dataclass

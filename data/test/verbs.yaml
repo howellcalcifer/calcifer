@@ -18,6 +18,8 @@ sit:
   transitive: false
 abracadabra:
   type: magic
+  description: You conjure a carrot.
+  creates: carrot
   aliases:
     - alakazam
   intransitive: true
@@ -29,7 +31,7 @@ go:
 take:
   transitive: true
   intransitive: false
-  type: inventory
+  type: item_transfer
   aliases:
     - get
   source: ground
@@ -37,7 +39,7 @@ take:
 drop:
   transitive: true
   intransitive: false
-  type: inventory
+  type: item_transfer
   source: inventory
   destination: ground
 look:
@@ -46,4 +48,9 @@ look:
   transitive: true
 quit:
   type: quit
+  intransitive: true
+inventory:
+  type: inventory
+  aliases:
+    - i
   intransitive: true

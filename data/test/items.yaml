@@ -6,3 +6,5 @@ lock:
   display_name: "lock of hair"
 beer:
   description: "A pint of beer."
+carrot:
+  description: "A freshly conjured carrot."

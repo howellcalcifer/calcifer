@@ -4,14 +4,16 @@ from world.verb import Verb, VerbType, InventoryVerb
 
 verbs = {
     'look': Verb(name="look", type=VerbType.LOOK, description=None, transitive=True, intransitive=True),
+    'inventory': Verb(name="inventory", type=VerbType.INVENTORY, description=None,
+                      transitive=False, intransitive=True),
     'nod': Verb(name="nod", type=VerbType.GESTURE, description=None, transitive=True, intransitive=False),
     'bow': Verb(name="bow", type=VerbType.GESTURE, description=Scene("You bow gracefully."),
                 transitive=True, intransitive=False),
     'quit': Verb(name="quit", type=VerbType.QUIT, description=None, intransitive=True, transitive=False),
-    'take': InventoryVerb(name="take", type=VerbType.INVENTORY, description=None, intransitive=False,
+    'take': InventoryVerb(name="take", type=VerbType.ITEM_TRANSFER, description=None, intransitive=False,
                           transitive=False, source=CurrentContainerType.LOCATION_ITEMS,
                           destination=CurrentContainerType.PROTAGONIST_ITEMS),
-    'drop': InventoryVerb(name="drop", type=VerbType.INVENTORY, description=None, intransitive=False,
+    'drop': InventoryVerb(name="drop", type=VerbType.ITEM_TRANSFER, description=None, intransitive=False,
                           transitive=False, source=CurrentContainerType.PROTAGONIST_ITEMS,
                           destination=CurrentContainerType.LOCATION_ITEMS),
     'bob': Verb(name="bob", type=VerbType.GESTURE, description=Scene("You bob around a bit"),

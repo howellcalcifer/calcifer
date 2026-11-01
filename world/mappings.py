@@ -92,7 +92,7 @@ class ItemMapping(dict[str, Item]):
 
 class VerbMapping(dict[str, Verb]):
     @classmethod
-    def from_yaml(cls, package: str, resource: str) -> VerbMapping:
+    def from_yaml(cls, package: str, resource: str, items: ItemMapping) -> VerbMapping:
         with (files(package) / resource).open('r') as text_io:
             raw_struct = load(text_io, Loader)
         verb_dictionary = VerbMapping()
@@ -102,11 +102,16 @@ class VerbMapping(dict[str, Verb]):
             description = Scene(properties["description"]) if "description" in properties else Scene(f"You {verb}.")
             transitive = properties.get("transitive")
             intransitive = properties.get("intransitive")
-            if verb_type == VerbType.INVENTORY:
+            if verb_type == VerbType.ITEM_TRANSFER:
                 mapped_verb = Verb.create(
                     verb, verb_type, description, transitive, intransitive,
                     CurrentContainerType(properties["source"]),
                     CurrentContainerType(properties["destination"]),
+                )
+            elif verb_type == VerbType.MAGIC:
+                mapped_verb = Verb.create(
+                    verb, verb_type, description, transitive, intransitive,
+                    items[properties["creates"]],
                 )
             else:
                 mapped_verb = Verb.create(verb, verb_type, description, transitive, intransitive)

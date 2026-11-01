@@ -76,10 +76,10 @@ class UserInputCase:
 
 nod_verb = Verb(name="nod", type=VerbType.GESTURE, description=None, intransitive=True, transitive=False)
 frown_verb = Verb(name="frown", type=VerbType.GESTURE, description=None, intransitive=True, transitive=False)
-take_verb = InventoryVerb(name="take", type=VerbType.INVENTORY, description=None, intransitive=True, transitive=False,
+take_verb = InventoryVerb(name="take", type=VerbType.ITEM_TRANSFER, description=None, intransitive=True, transitive=False,
                           source=CurrentContainerType.LOCATION_ITEMS,
                           destination=CurrentContainerType.PROTAGONIST_ITEMS)
-drop_verb = InventoryVerb(name="drop", type=VerbType.INVENTORY, description=None, intransitive=True, transitive=False,
+drop_verb = InventoryVerb(name="drop", type=VerbType.ITEM_TRANSFER, description=None, intransitive=True, transitive=False,
                           source=CurrentContainerType.PROTAGONIST_ITEMS,
                           destination=CurrentContainerType.LOCATION_ITEMS)
 look_verb = Verb(name="look", type=VerbType.LOOK, description=None, intransitive=True, transitive=True)
@@ -177,4 +177,3 @@ class TestInputCommandLineUserAction(TestCase):
             call(ActionSubmitted(parsed_nod)),
         ])
         mocked_print.assert_not_called()
-

@@ -17,6 +17,11 @@ class ActionResolver:
     def resolve(self, action: UnresolvedAction) -> UserAction:
 
         if action.object_ref_1 is None:
+            if action.verb.type == VerbType.INVENTORY:
+                protagonist = self.game.protagonist
+                if protagonist is None:
+                    raise InvalidUnresolvedAction("There is no active protagonist.")
+                return UserAction(verb=action.verb, inventory=tuple(protagonist.inventory.values()))
             if action.verb.type != VerbType.LOOK:
                 return UserAction(verb=action.verb)
             protagonist = self.game.protagonist
@@ -33,7 +38,7 @@ class ActionResolver:
             else:
                 raise InvalidUnresolvedAction(f"You can't see any {action.object_ref_1}.") from None
 
-        if action.verb.type == VerbType.INVENTORY:
+        if action.verb.type == VerbType.ITEM_TRANSFER:
             if not isinstance(action.verb, InventoryVerb) or not isinstance(obj, (Item, Character)):
                 raise InvalidUnresolvedAction(f"You can't {action.verb.name} that.") from None
             source = self.game.container(action.verb.source)

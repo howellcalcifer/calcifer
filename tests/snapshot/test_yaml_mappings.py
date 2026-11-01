@@ -4,8 +4,11 @@ from world.mappings import LocationMapping, CharacterMapping, ItemMapping, VerbM
 
 
 def test_verb_dict_from_yaml(snapshot):
-    actual_dict = VerbMapping.from_yaml("data.test", "verbs.yaml")
+    items = ItemMapping.from_yaml("data.test", "items.yaml")
+    actual_dict = VerbMapping.from_yaml("data.test", "verbs.yaml", items)
     assert actual_dict["get"] is actual_dict["take"]
+    assert actual_dict["alakazam"] is actual_dict["abracadabra"]
+    assert actual_dict["abracadabra"].created_item == items["carrot"]
     snapshot.assert_match(yaml.dump(actual_dict), 'verb_dict.yaml')
 
 

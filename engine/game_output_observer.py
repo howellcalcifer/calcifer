@@ -28,12 +28,21 @@ class GameOutputObserver(Observer[GameEvent]):
                 self.output.show_scene(action.object.description)
             elif action.verb.type == VerbType.GESTURE:
                 self.output.show_scene(action.verb.description)
-            elif action.verb.type == VerbType.INVENTORY:
+            elif action.verb.type == VerbType.ITEM_TRANSFER:
                 assert isinstance(action.object, Item)
                 self.output.show_scene(Scene(f"You {action.verb.name} the {action.object.name}."))
+            elif action.verb.type == VerbType.INVENTORY:
+                item_names = [str(item) for item in action.inventory or ()]
+                if item_names:
+                    self.output.show_scene(Scene(f"You are carrying: {', '.join(item_names)}."))
+                else:
+                    self.output.show_scene(Scene("You are carrying nothing."))
             elif action.verb.type == VerbType.MOVE:
                 assert isinstance(action.object, Exit)
                 self.output.show_scene(Scene(f"You go {action.object.direction}.\n"))
                 self.output.show_scene(action.object.leads_to.description)
+            elif action.verb.type == VerbType.MAGIC:
+                assert action.verb.description is not None
+                self.output.show_scene(action.verb.description)
         else:
             assert_never(event)

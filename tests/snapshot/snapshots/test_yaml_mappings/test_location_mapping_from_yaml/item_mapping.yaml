@@ -5,6 +5,11 @@ dictitems:
       text: A pint of beer.
     display_name: null
     name: beer
+  carrot: !!python/object:world.item.Item
+    description: !!python/object:world.scene.Scene
+      text: A freshly conjured carrot.
+    display_name: null
+    name: carrot
   lock: !!python/object:world.item.Item
     description: null
     display_name: lock of hair

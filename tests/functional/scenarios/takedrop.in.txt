@@ -4,4 +4,8 @@ drop rock
 grimace
 drop rock
 bow
+abracadabra
+take carrot
+i
+drop carrot
 quit

@@ -7,9 +7,8 @@ from world.mappings import ItemMapping, CharacterMapping, LocationMapping, VerbM
 
 
 def main(data_module: str = 'data'):
-    verbs = VerbMapping.from_yaml(data_module, "verbs.yaml")
-
     items = ItemMapping.from_yaml(data_module, "items.yaml")
+    verbs = VerbMapping.from_yaml(data_module, "verbs.yaml", items)
     characters = CharacterMapping.from_yaml(data_module, "characters.yaml", items)
     LocationMapping.from_yaml(data_module, "locations.yaml", items, characters)
     protagonist_name = 'calcifer'

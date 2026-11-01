@@ -4,4 +4,8 @@ You drop the rock.
 You grimace.
 You can't drop that.
 You bow gracefully.
+You conjure a carrot.
+You take the carrot.
+You are carrying: sock, lock of hair, carrot.
+You drop the carrot.
 Goodbye for now.

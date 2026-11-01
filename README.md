@@ -8,6 +8,9 @@
 
 Move with `go <direction>` or use `n`, `s`, `e`, `w`, `nw`, `ne`, `sw`, and `se` for the
 corresponding cardinal and diagonal directions.
+`get <item>` is also accepted as a synonym for `take <item>`.
+`abracadabra` conjures a carrot on the ground at Calcifer's current location.
+Use `inventory` or `i` to list what Calcifer is carrying.
 
 ## Local developemt
 
